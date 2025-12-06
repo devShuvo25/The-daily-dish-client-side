@@ -1,25 +1,6 @@
 import React from "react";
 import { FaStar, FaMapMarkerAlt, FaClock, FaUser } from "react-icons/fa";
-
-/**
- * MealsCard
- * Props:
- * - meal: object containing required fields
- *   {
- *     _id,
- *     foodName,
- *     chefName,
- *     foodImage,
- *     price,
- *     rating,
- *     ingredients (array),
- *     deliveryArea,
- *     estimatedDeliveryTime,
- *     chefExperience
- *   }
- * - onOrder: function(meal) => void
- */
-const MealsCard = ({ meal = {}, onOrder }) => {
+const MealsCard = ({ meal = {} }) => {
   const {
     _id,
     foodName,
@@ -83,7 +64,7 @@ const MealsCard = ({ meal = {}, onOrder }) => {
 
         <div className="flex gap-2">
           <button
-            onClick={() => onOrder?.(meal)}
+            
             className="btn btn-primary flex-1"
             aria-label={`Order ${foodName}`}
           >
@@ -91,9 +72,8 @@ const MealsCard = ({ meal = {}, onOrder }) => {
           </button>
           <button
             className="btn btn-ghost"
-            onClick={() => alert(`Chef ID: ${meal.chefId || "unknown"}`)}
           >
-            View Chef
+            See Details
           </button>
         </div>
       </div>

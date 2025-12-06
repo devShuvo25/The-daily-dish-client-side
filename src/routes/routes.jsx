@@ -24,6 +24,10 @@ export const routes = createBrowserRouter([
                 Component:Public_Meals
             },
             {
+                path:'/details',
+                Component: ''
+            },
+            {
                 path:'/login',
                 Component:Login
             },

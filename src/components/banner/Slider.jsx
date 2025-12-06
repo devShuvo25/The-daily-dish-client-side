@@ -44,31 +44,22 @@ const cards = [
       transition={{ duration: 0.5 }}
       className="px-3 rounded-2xl"
     >
-          <div className="relative  w-full overflow-hidden rounded-2xl ">
+          <div className="relative py-5   w-full overflow-hidden rounded-2xl ">
       <div
-        className="flex transition-transform duration-700 ease-in-out"
+        className="flex  transition-transform duration-700 ease-in-out"
         style={{
           width: `${cards.length * 100}%`,
           transform: `translateX(-${currentIndex * (100 / cards.length)}%)`,
         }}
       >
         {cards.map((card) => (
-                <div class="relative w-full lg:h-[450px]">
+                <div class="relative w-full  lg:h-[450px]">
         <img
           src={card.image}
           class="w-full h-full object-cover"
         />
 
         <div class="absolute inset-0 bg-black opacity-60"></div>
-
-        {/* <div class="absolute inset-1 flex flex-col items-center gap-5 justify-center text-white">
-          <h1 class="text-2xl lg:text-5xl text-white font-bold ms-10 text-left ">
-           {card.title}
-          </h1>
-          <h1 className="text-center text-xl font-semibold">
-            {card.subtitle}
-          </h1>
-        </div> */}
       </div>
         ))}
       </div>

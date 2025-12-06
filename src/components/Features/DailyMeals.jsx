@@ -26,7 +26,7 @@ const DailyMeals = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
   };
     return (
-              <section className="py-5 px-4 bg-secondary">
+              <section className="py-5 px-4 ">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
