@@ -26,7 +26,7 @@ const DailyMeals = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
   };
     return (
-              <section className="py-5 px-4 ">
+              <section className="py-5 px-4">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -57,7 +57,7 @@ const DailyMeals = () => {
                   variants={itemVariants}
                   transition={{ delay: i * 0.06 }}
                   viewport={{ once: true }}
-                  className="bg-neutral rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:scale-105"
+                  className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:scale-105"
                 >
                   <div className="relative h-48 bg-gray-700">
                     <img

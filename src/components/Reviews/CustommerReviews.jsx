@@ -19,7 +19,7 @@ const CustommerReviews = () => {
     },
   });
     return (
-      <section className="py-16 px-4 bg-neutral">
+      <section className="py-16 px-4 ">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: -10 }}

@@ -20,7 +20,7 @@ const FeaturesCard = ({
   onCtaClick,
 }) => {
   return (
-    <article className="bg-neutral rounded-lg shadow hover:shadow-lg transition-transform transform hover:-translate-y-1">
+    <article className="bg-white rounded-lg shadow hover:shadow-lg transition-transform transform hover:-translate-y-1">
       {image && (
         <div className="h-40 w-full overflow-hidden rounded-t-lg bg-gray-200">
           <img src={image} alt={title} className="w-full h-full object-cover" />

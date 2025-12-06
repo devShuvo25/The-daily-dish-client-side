@@ -1,6 +1,12 @@
 import React from "react";
 import { FaStar, FaMapMarkerAlt, FaClock, FaUser } from "react-icons/fa";
+import useAxiosSecure from "../../axios/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router";
 const MealsCard = ({ meal = {} }) => {
+  const {axiosSecure} = useAxiosSecure()
+  // const {} = useQuery()
+  
   const {
     _id,
     foodName,
@@ -13,7 +19,6 @@ const MealsCard = ({ meal = {} }) => {
     estimatedDeliveryTime,
     chefExperience,
   } = meal;
-
   return (
     <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
       <div className="relative h-44 bg-gray-100">
@@ -70,11 +75,14 @@ const MealsCard = ({ meal = {} }) => {
           >
             Order Now
           </button>
-          <button
+          <Link
             className="btn btn-ghost"
+            to={`/details/${_id}`}
+           
           >
+            
             See Details
-          </button>
+          </Link>
         </div>
       </div>
     </article>

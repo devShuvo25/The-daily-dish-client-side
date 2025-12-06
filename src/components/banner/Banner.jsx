@@ -38,7 +38,7 @@ const Banner = () => {
 
             <button
               onClick={() => navigate("/register")}
-              className="w-full sm:w-auto btn btn-outline btn-md sm:btn-lg border-none shadow-none text-accent"
+              className="w-full sm:w-auto btn btn-outline btn-md sm:btn-lg border-none shadow-none text-white hover:bg-white hover:text-primary"
             >
               Become a Chef
             </button>

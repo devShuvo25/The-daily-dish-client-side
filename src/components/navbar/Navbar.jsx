@@ -7,7 +7,8 @@ const Navbar = () => {
   const navigate = useNavigate()
   const Links = [
     { name: "Home", path: "/" },
-    {name: "Meals" , path:"/meals"}
+    {name: "Meals" , path:"/meals"},
+    {name: "Details" , path:"/details"}
     ];
   const handleLogOut = () => {
     logout();
