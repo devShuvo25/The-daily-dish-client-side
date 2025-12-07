@@ -2,10 +2,15 @@ import React from "react";
 import { FaStar, FaMapMarkerAlt, FaClock, FaUser } from "react-icons/fa";
 import useAxiosSecure from "../../axios/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router";
-const MealsCard = ({ meal = {} }) => {
+import { Link, useNavigate } from "react-router";
+import { useForm } from "react-hook-form";
+import useAuth from "../../hooks/authentication/useAuth";
+import Swal from "sweetalert2";
+const MealsCard = ({ meal = {},isFavourite ,refetch}) => {
   const {axiosSecure} = useAxiosSecure()
+  const navigate = useNavigate()
   // const {} = useQuery()
+  const {user} = useAuth()
   
   const {
     _id,
@@ -19,6 +24,49 @@ const MealsCard = ({ meal = {} }) => {
     estimatedDeliveryTime,
     chefExperience,
   } = meal;
+  console.log(isFavourite);
+    
+  const handleRemoveFromFavourites=(_id)=>{
+    Swal.fire({
+  title: "Are you sure?",
+  text: "Do you want to remove this item from your favourites list?",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "Yes, delete it!"
+})
+.then(result => {
+  if(result.isConfirmed){
+        axiosSecure.delete(`/favourite-meals?id=${_id}&userEmail=${user?.email}`)
+    .then(res=>{
+        console.log("Deleted Response", res.data)
+        if(res.data.deletedCount){
+           Swal.fire({
+      title: "Deleted!",
+      text: "Your file has been deleted.",
+      icon: "success"
+    });
+        }
+        refetch();
+    })
+  }
+})
+
+}
+
+
+
+
+
+
+  const handleActions = (_id) => {
+    if(!isFavourite){
+      return navigate(`/details/${_id}`);
+    }
+    handleRemoveFromFavourites(_id)
+
+  }
   return (
     <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
       <div className="relative h-44 bg-gray-100">
@@ -68,21 +116,22 @@ const MealsCard = ({ meal = {} }) => {
         </p>
 
         <div className="flex gap-2">
-          <button
+          <Link
+          to={`/order/${_id}`}
             
             className="btn btn-primary flex-1"
             aria-label={`Order ${foodName}`}
           >
             Order Now
-          </button>
-          <Link
+          </Link>
+          <button 
+            onClick={() =>handleActions(_id)}
             className="btn btn-ghost"
-            to={`/details/${_id}`}
+            
            
           >
-            
-            See Details
-          </Link>
+            {isFavourite? "Remove" : "View Details"}
+          </button>
         </div>
       </div>
     </article>

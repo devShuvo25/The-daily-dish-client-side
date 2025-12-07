@@ -23,6 +23,8 @@ const Login = () => {
   // const location = useLocation();
   const [error, setError] = useState();
   const [isActive, setIsActive] = useState(false);
+  const location = useLocation()
+  console.log(location.state);
   const handleGoogleSignIn = () => {
     googleSignIn()
       .then((result) => {
@@ -31,7 +33,11 @@ const Login = () => {
             title: "Suucessfully loged in",
             icon: "success",
           });
-          navigate("/");
+          if(location.state){
+            
+            return navigate(location.state)
+          }
+          navigate('/')
         }
       })
       .catch((err) => console.log(err.message));

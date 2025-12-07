@@ -82,6 +82,10 @@ const handleFavourite = (mealId) => {
  
   return (
     <div className="py-5 px-4  mx-auto">
+      <div className="flex flex-col text-center items-center justify-center my-5">
+        <h1 className="text-xl font-bold  lg:text-4xl text-primary"> Meal Details </h1>
+        <p className="text-sm opacity-75">View complete information about this dish before placing your order.</p>
+      </div>
       {mealLoading ? (
         <div className="flex justify-center py-20">Loading...</div>
       ) : (

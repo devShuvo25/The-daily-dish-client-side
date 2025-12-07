@@ -9,6 +9,9 @@ import Details from "../pages/Details";
 import DashBoard from "../pages/DashBoard";
 import MyMeals from "../components/Dashboard/MyMeals";
 import FavouriteMeals from "../components/Dashboard/MyFavourite";
+import Error from "../pages/Error";
+import OrderForm from "../pages/OrderForm";
+
 
 export const routes = createBrowserRouter([
     {
@@ -29,7 +32,19 @@ export const routes = createBrowserRouter([
             },
             {
                 path:'/details/:id',
-                Component: Details
+                element: <UserPrivetRoutes>
+                            <Details/>
+                        </UserPrivetRoutes>
+            },
+            {
+                path:'/order/:id',
+                element: <UserPrivetRoutes>
+                            <OrderForm/>
+                        </UserPrivetRoutes>
+            },
+            {
+                path:'/*',
+                Component:Error
             },
             {
                 path:'/dashboard',
@@ -38,15 +53,19 @@ export const routes = createBrowserRouter([
                     // Dashboard nested routes can be added here
                     {
                         index:true,
-                        element: <p>Hello</p>
+                        element: <h1 className="flex justify-center items-center text-primary text-xl font-bold lg:text-4xl">My Meals Featured not added yet</h1>
                     },
                     {
                         path:'my-meals',
-                        Component: MyMeals
+                        element: <UserPrivetRoutes>
+                            <MyMeals/>
+                        </UserPrivetRoutes>
                     },
                     {
                         path:'my-favourites',
-                        Component:FavouriteMeals
+                       element: <UserPrivetRoutes>
+                            <FavouriteMeals/>
+                        </UserPrivetRoutes>
                     }
 
                 ]

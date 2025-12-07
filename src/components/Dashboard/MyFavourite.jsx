@@ -3,11 +3,12 @@ import React from "react";
 import useAuth from "../../hooks/authentication/useAuth";
 import useAxiosSecure from "../../axios/useAxiosSecure";
 import MealsCard from "../cards/MealsCard";
-import FavouriteMealsCard from "../cards/favouriteMealsCard";
+import { useLocation } from "react-router";
 
 const FavouriteMeals = () => {
 const {user} = useAuth();
 const {axiosSecure} = useAxiosSecure();
+const location = useLocation();
   const {data: favouriteMeals =[],refetch,isLoading} = useQuery({
     queryKey: ['favourite-meals',user?.email],
     queryFn: async () => {
@@ -36,7 +37,7 @@ const {axiosSecure} = useAxiosSecure();
       {/* Meal Cards */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {favouriteMeals.map((meal) => (
-          <FavouriteMealsCard key={meal._id} meal={meal} refetch={refetch} />
+          <MealsCard key={meal._id} meal={meal} isFavourite={true} refetch={refetch}></MealsCard>
         ))}
       </div>
 
