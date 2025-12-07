@@ -54,14 +54,6 @@ const addUserToDB = useMutation({
       if (result.user) {
         console.log(user);
        addUserToDB.mutate(user)
-  //   const {data: userData =[]} = useQuery({
-  //   queryKey: ["users",user?.email],
-  //   queryFn: async () => {
-  //     const res = await axiosSecure.post("/users", user);
-  //     return res.data
-  //   },
-  // })
-  
         // navigate("/login");
       }
     });
@@ -72,6 +64,7 @@ const addUserToDB = useMutation({
     }
     createUser(data.user_email, data.user_password).then(async(result) => {
       if (result.user) {
+        console.log(result.user);
         const profile = {
           displayName: data.user_name,
           photoURL: data.user_photoURL || null

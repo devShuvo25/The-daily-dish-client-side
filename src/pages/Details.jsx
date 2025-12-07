@@ -5,6 +5,7 @@ import useAxiosSecure from "../axios/useAxiosSecure";
 import useAuth from "../hooks/authentication/useAuth";
 import DetailsCard from "../components/cards/DetailsCard";
 import { FaStar } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const Details = () => {
   const { id } = useParams();
@@ -26,38 +27,57 @@ const Details = () => {
     },
   });
 // handle favourite
-const handleFavourite = async(mealId) => {
+const handleFavourite = (mealId) => {
     const favouriteData = {
         userEmail: user?.email,
         mealId: mealId
     }
+    Swal.fire({
+  title: "Are you sure?",
+  text: "You want to add this meal to your favourites!",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "Yes, add it!"
+}).then((result) => {
+  if (result.isConfirmed) {
   try {
-    const res = await axiosSecure.post('/favourites',favouriteData);
-    console.log(res.data);
+    axiosSecure.post('/favourites',favouriteData)
+    .then(res => {
+        console.log("After hitting", res.data)
+        if(res.data.insertedId){
+           Swal.fire({
+            title: "Added Successfully",
+            text: "Your meal has been added to favourites.",
+            icon: "success"
+          });
+        }
+        else{
+          Swal.fire({
+  icon: "error",
+  title: "Oops...",
+  text: "Meals already in favourites!",
+  footer: '<a href="#">Why do I have this issue?</a>'
+});
+        }
+      })
+    
   }
   catch (error) {
     console.error("Error adding to favourites:", error);
+    Swal.fire({
+  icon: "error",
+  title: "Oops...",
+  text: "Something went wrong!",
+  footer: '<a href="#">Why do I have this issue?</a>'
+});
   }
+  }
+})
+  
 }
-//   const {
-//     data: reviews = [],
-//     isLoading: reviewsLoading,
-//     refetch: refetchReviews,
-//   } = useQuery({
-//     queryKey: ["meal-reviews", id],
-//     queryFn: async () => {
-//       try {
-//         const res = await axiosSecure.get(`/api/reviews?mealId=${id}`);
-//         return res.data;
-//       } catch {
-//         return [];
-//       }
-//     },
-//   });
 
-//   const [rating, setRating] = useState(5);
-//   const [comment, setComment] = useState("");
-//   const [submitting, setSubmitting] = useState(false);
 
  
   return (
@@ -130,9 +150,6 @@ const handleFavourite = async(mealId) => {
               <div className="flex items-center gap-3 mb-3">
                 <label className="text-sm">Rating:</label>
                 <select
-                //   value={rating}
-                //   onChange={(e) => setRating(Number(e.target.value))}
-                //   className="select select-sm"
                 >
                   {[5, 4, 3, 2, 1].map((n) => (
                     <option key={n} value={n}>

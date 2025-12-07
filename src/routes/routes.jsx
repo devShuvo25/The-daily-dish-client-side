@@ -6,6 +6,9 @@ import Register from "../pages/Register";
 import UserPrivetRoutes from "../privetRoutes/userPrivetRoutes/UserPrivetRoutes";
 import Public_Meals from "../pages/Public_Meals";
 import Details from "../pages/Details";
+import DashBoard from "../pages/DashBoard";
+import MyMeals from "../components/Dashboard/MyMeals";
+import FavouriteMeals from "../components/Dashboard/MyFavourite";
 
 export const routes = createBrowserRouter([
     {
@@ -27,6 +30,26 @@ export const routes = createBrowserRouter([
             {
                 path:'/details/:id',
                 Component: Details
+            },
+            {
+                path:'/dashboard',
+                Component:DashBoard,
+                children: [
+                    // Dashboard nested routes can be added here
+                    {
+                        index:true,
+                        element: <p>Hello</p>
+                    },
+                    {
+                        path:'my-meals',
+                        Component: MyMeals
+                    },
+                    {
+                        path:'my-favourites',
+                        Component:FavouriteMeals
+                    }
+
+                ]
             },
             {
                 path:'/login',

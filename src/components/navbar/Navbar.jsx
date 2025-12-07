@@ -1,27 +1,47 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router";
+import { motion, AnimatePresence } from "framer-motion";
 import useAuth from "../../hooks/authentication/useAuth";
+import logo from "../../assets/logo.png";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const Links = [
     { name: "Home", path: "/" },
-    {name: "Meals" , path:"/meals"},
-    {name: "Details" , path:"/details"}
-    ];
+    { name: "Meals", path: "/meals" },
+    // { name: "Details", path: "/details" },
+    { name: "Dashboard", path: "/dashboard" },
+  ];
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const handleLogOut = () => {
     logout();
-    navigate("login")
+    navigate("login");
   };
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") setDrawerOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
+  useEffect(() => {
+    // lock scroll when drawer open
+    if (drawerOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [drawerOpen]);
   return (
     <div>
-      <div className="navbar fixed z-100 bg-white shadow-sm text-secondary px-10">
+      <div className="navbar fixed z-100 bg-white shadow-sm text-secondary px-2 lg:px-8 ">
         <div className="navbar-start">
-          <div className="dropdown">
-            <div
-              tabIndex={0}
-              role="button"
+          <div>
+            <button
+              aria-label="Open menu"
+              onClick={() => setDrawerOpen(true)}
               className="btn btn-primary lg:hidden"
             >
               <svg
@@ -31,22 +51,18 @@ const Navbar = () => {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                {" "}
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
                   d="M4 6h16M4 12h8m-8 6h16"
-                />{" "}
+                />
               </svg>
-            </div>
-            <ul
-              tabIndex="-1"
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-            ></ul>
+            </button>
           </div>
-          <a className=" text-xl font-bold ">
-            The Daily <span className="text-primary">Dish</span>
+          <a className="flex justify-center items-center gap-5 text-xl font-bold ">
+            <img className="h-12 ms-3" src={logo} alt="" />
+            <h1 className="hidden lg:block">The Daily <span className="text-primary">Dish</span></h1>
           </a>
         </div>
         <div className="navbar-center hidden lg:flex">
@@ -56,7 +72,11 @@ const Navbar = () => {
                 <NavLink
                   to={link.path}
                   className={({ isActive }) =>
-                    ` ${isActive ? "text-primary font-semibold   mb-2" : "my-links"}`
+                    ` ${
+                      isActive
+                        ? "text-primary font-semibold   mb-2"
+                        : "my-links"
+                    }`
                   }
                 >
                   {link.name}
@@ -80,19 +100,129 @@ const Navbar = () => {
             </div>
           ) : (
             <div className=" cursor-pointer flex items-center gap-3">
-              <button onClick={handleLogOut} className="btn btn-primary">Logout</button>
+              <button onClick={handleLogOut} className="btn btn-primary">
+                Logout
+              </button>
               {/* <img src={user?.photoURL || "https://cdn-icons-png.flaticon.com/512/219/219983.png"} alt="" /> */}
-              <div
-                
-        
-                className=" m-1 w-10 h-10 rounded-[50%] border-[2px] justify-center items-center border-primary  flex "
-              >
-                <img className="h-8 w-8  rounded-[50%]" src={user?.photoURL || "https://cdn-icons-png.flaticon.com/512/219/219983.png"} alt="" />
+              <div className="m-1 w-10 h-10 rounded-full border-2 justify-center items-center border-primary flex">
+                <img
+                  className="h-8 w-8 rounded-full"
+                  src={
+                    user?.photoURL ||
+                    "https://cdn-icons-png.flaticon.com/512/219/219983.png"
+                  }
+                  alt=""
+                />
               </div>
             </div>
           )}
         </div>
         {}
+        <AnimatePresence>
+          {drawerOpen && (
+            <>
+              <motion.div
+                key="backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                className="fixed inset-0 bg-black/40 z-40"
+                onClick={() => setDrawerOpen(false)}
+              />
+
+              <motion.aside
+                key="drawer"
+                initial={{ x: "-100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+                transition={{ type: "spring", stiffness: 260, damping: 30 }}
+                className="fixed left-0 top-0 bottom-0 w-72 bg-white z-50 shadow-xl p-6 overflow-y-auto"
+                role="dialog"
+                aria-modal="true"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <div className="text-lg font-bold">
+                    The Daily <span className="text-primary">Dish</span>
+                  </div>
+                  <button
+                    aria-label="Close menu"
+                    onClick={() => setDrawerOpen(false)}
+                    className="btn btn-ghost"
+                  >
+                    Close
+                  </button>
+                </div>
+
+                <nav>
+                  <ul className="flex flex-col gap-3">
+                    {Links.map((link) => (
+                      <li key={link.path}>
+                        <NavLink
+                          to={link.path}
+                          onClick={() => setDrawerOpen(false)}
+                          className={({ isActive }) =>
+                            `block py-2 px-3 rounded ${
+                              isActive
+                                ? "bg-primary text-white font-semibold"
+                                : "text-secondary"
+                            }`
+                          }
+                        >
+                          {link.name}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+
+                <div className="mt-6 border-t pt-4">
+                  {!user ? (
+                    <div className="flex flex-col gap-3">
+                      <Link
+                        to="/login"
+                        onClick={() => setDrawerOpen(false)}
+                        className="btn btn-primary"
+                      >
+                        Sign in
+                      </Link>
+                      <Link
+                        to="/register"
+                        onClick={() => setDrawerOpen(false)}
+                        className="btn btn-outline"
+                      >
+                        Sign Up
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={
+                          user?.photoURL ||
+                          "https://cdn-icons-png.flaticon.com/512/219/219983.png"
+                        }
+                        alt="user"
+                        className="w-10 h-10 rounded-full"
+                      />
+                      <div className="flex-1">
+                        <p className="font-semibold">{user?.displayName}</p>
+                        <button
+                          onClick={() => {
+                            handleLogOut();
+                            setDrawerOpen(false);
+                          }}
+                          className="btn btn-sm btn-primary mt-2"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </motion.aside>
+            </>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
