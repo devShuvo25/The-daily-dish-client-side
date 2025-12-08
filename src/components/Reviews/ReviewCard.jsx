@@ -1,15 +1,43 @@
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import { useState, useRef, useEffect } from "react";
 import { FaStar } from "react-icons/fa";
-import userDemoImage from '../../assets/man.png'
-import useAxiosSecure from "../../axios/useAxiosSecure";
+import userDemoImage from "../../assets/man.png";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { motion, AnimatePresence } from "framer-motion";
 import useAuth from "../../hooks/authentication/useAuth";
 
-const ReviewCard = ({review}) => {
-const {user} = useAuth();
-   const {_id,reviewerImage,reviewerName,comment,rating,date} = review || {}
+const ReviewCard = ({ review }) => {
+  const { user } = useAuth();
+  const { reviewerImage, reviewerName, reviewerEmail, comment, rating, date } =
+    review || {};
+
+  const dropdownRef = useRef(null);
+  const containerRef = useRef(null);
+  const [open, setOpen] = useState(false);
+
+  // Toggle dropdown
+  const toggleDropdown = () => {
+    setOpen((prev) => !prev);
+  };
+
+  // Close when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <div className="w-full  bg-white shadow-md rounded-xl p-4 flex gap-4">
+    <div
+      className="w-full bg-white shadow-md rounded-xl p-4 flex gap-4 relative"
+      ref={containerRef}
+    >
       {/* Avatar */}
       <div className="flex-shrink-0">
         <img
@@ -21,10 +49,9 @@ const {user} = useAuth();
 
       {/* Content */}
       <div className="flex-1">
-        {/* Name + Time */}
         <div className="flex justify-between items-start">
-          <h3 className="font-semibold text-base sm:text-lg">{reviewerName}</h3>
-          <span className="text-xs text-gray-500">{date.split('T')[0]}</span>
+          <h3 className="font-semibold text-base">{reviewerName}</h3>
+          <span className="text-xs text-gray-500">{date.split("T")[0]}</span>
         </div>
 
         {/* Rating */}
@@ -39,10 +66,38 @@ const {user} = useAuth();
           <span className="text-sm font-medium ml-1">{rating}.0</span>
         </div>
 
-        {/* Comment */}
-        <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
-          {comment}
-        </p>
+        {/* Comment + Menu Icon */}
+        <div className="flex justify-between items-center relative">
+          <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
+            {comment}
+          </p>
+
+          {/* 3-dot menu (only for owner) */}
+          {user?.email === reviewerEmail && (
+            <BsThreeDotsVertical
+              className="cursor-pointer ml-2"
+              onClick={toggleDropdown}
+            />
+          )}
+
+          {/* Dropdown (Animated) */}
+          <AnimatePresence>
+            {open && (
+              <motion.ul
+                ref={dropdownRef}
+                key="dropdown"
+                initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+                className="absolute right-0 top-8 dropdown-content menu bg-base-100 rounded-lg w-40 p-2 shadow-lg border z-50"
+              >
+                <li><a>Edit Review</a></li>
+                <li><a className="text-red-500">Delete Review</a></li>
+              </motion.ul>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
