@@ -13,6 +13,7 @@ const DashBoard = () => {
   const Links = [
     { name: "My Meals", icon: <MdNoMeals />, path: "/dashboard/my-meals" },
     { name: "Favourite Meals", icon:<MdNoMeals />, path: "/dashboard/my-favourites" },
+    { name: "My Reviews", icon:<MdNoMeals />, path: "/dashboard/my-reviews" },
     { name: "Manage Orders", icon:<MdNoMeals />, path: "/dashboard/manage-orders" },
   ];
 

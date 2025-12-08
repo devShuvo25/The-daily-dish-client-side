@@ -76,7 +76,7 @@ const Details = () => {
   const {data: reviews =[],refetch} = useQuery({
         queryKey: ["review"],
         queryFn: async () => {
-            const res = await axiosSecure.get('/reviews')
+            const res = await axiosSecure.get(`reviews/${id}`)
             return res.data
         }
     })
@@ -85,8 +85,11 @@ const Details = () => {
     if (data) {
       const reviewInfo = {
         mealId: id,
+        mealName: meal?.foodName || '',
+        mealImage: meal?.foodImage || '',
         reviewerName: user?.displayName,
         reviewerImage: user?.photoURL,
+        reviewerEmail:user?.email,
         rating: data.rating,
         comment: data.comment,
         date: new Date(),
