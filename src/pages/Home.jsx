@@ -11,10 +11,11 @@ import DailyMeals from "../components/Features/DailyMeals";
 import CustommerReviews from "../components/Reviews/CustommerReviews";
 import HIT from "../components/additional/HIT";
 import Action from "../components/additional/Action";
+import useRole from "../hooks/userRole/useRole";
 
 const Home = () => {
-  const navigate = useNavigate();
-  const { axiosSecure } = useAxiosSecure();
+const {role} = useRole()
+console.log(role);
 
   return (
     <div className="bg-bg font-inter">
