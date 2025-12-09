@@ -3,6 +3,9 @@ import { Link, NavLink, useNavigate } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import useAuth from "../../hooks/authentication/useAuth";
 import logo from "../../assets/logo.png";
+import { MdNoMeals, MdReviews } from "react-icons/md";
+import { AiOutlineLike } from "react-icons/ai";
+import { FiTruck } from "react-icons/fi";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -203,8 +206,9 @@ const Navbar = () => {
               <Link
                 to="/dashboard/my-meals"
                 onClick={() => setDrawerOpen(false)}
-                className="block px-3 py-2 rounded text-sm hover:bg-primary hover:text-white"
+                className="flex items-center gap-2 block px-3 py-2 rounded text-sm hover:bg-primary hover:text-white"
               >
+                <MdNoMeals />
                 My Meals
               </Link>
             </li>
@@ -213,9 +217,20 @@ const Navbar = () => {
               <Link
                 to="/dashboard/my-favourites"
                 onClick={() => setDrawerOpen(false)}
-                className="block px-3 py-2 rounded text-sm hover:bg-primary hover:text-white"
+                className="flex items-center gap-2 block px-3 py-2 rounded text-sm hover:bg-primary hover:text-white"
               >
+                <AiOutlineLike />
                 Favourite Meals
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/dashboard/my-reviews"
+                onClick={() => setDrawerOpen(false)}
+                className="flex items-center gap-2 block px-3 py-2 rounded text-sm hover:bg-primary hover:text-white"
+              >
+                <MdReviews />
+                My Reviews
               </Link>
             </li>
 
@@ -223,8 +238,9 @@ const Navbar = () => {
               <Link
                 to="/dashboard/manage-orders"
                 onClick={() => setDrawerOpen(false)}
-                className="block px-3 py-2 rounded text-sm hover:bg-primary hover:text-white"
+                className="flex items-center gap-2 block px-3 py-2 rounded text-sm hover:bg-primary hover:text-white"
               >
+                <FiTruck />
                 Manage Orders
               </Link>
             </li>

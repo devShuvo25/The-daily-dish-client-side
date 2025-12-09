@@ -149,7 +149,7 @@ const Details = () => {
             </p>
         </div>
         <div className="flex flex-col gap-3 lg:gap-5 items-center justify-center">
-          {reviews.map(review => <ReviewCard review={review}/>)}
+          {reviews.map(review => <ReviewCard review={review} refetch={refetch}/> )}
         </div>
         
     </div>

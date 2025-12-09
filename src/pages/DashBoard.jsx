@@ -2,8 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router';
 import useAxiosSecure from '../axios/useAxiosSecure';
-import { MdOutlineDashboard } from "react-icons/md";
+import { MdOutlineDashboard, MdReviews } from "react-icons/md";
 import { MdNoMeals } from "react-icons/md";
+import { FiTruck } from "react-icons/fi";
+import { AiOutlineLike } from "react-icons/ai";
 
 const DashBoard = () => {
 
@@ -12,9 +14,9 @@ const DashBoard = () => {
  
   const Links = [
     { name: "My Meals", icon: <MdNoMeals />, path: "/dashboard/my-meals" },
-    { name: "Favourite Meals", icon:<MdNoMeals />, path: "/dashboard/my-favourites" },
-    { name: "My Reviews", icon:<MdNoMeals />, path: "/dashboard/my-reviews" },
-    { name: "Manage Orders", icon:<MdNoMeals />, path: "/dashboard/manage-orders" },
+    { name: "Favourite Meals", icon:<AiOutlineLike />, path: "/dashboard/my-favourites" },
+    { name: "My Reviews", icon:<MdReviews />, path: "/dashboard/my-reviews" },
+    { name: "Manage Orders", icon:<FiTruck />, path: "/dashboard/manage-orders" },
   ];
 
 
@@ -29,15 +31,16 @@ const DashBoard = () => {
         <ul className="menu w-full">
           {Links.map((link) => (
             <li key={link.path}>
-              {link.icon}
+              
               <Link
                 to={link.path}
-                className={`block p-3 rounded-lg transition-all duration-200
+                className={`block flex p-3 rounded-lg transition-all duration-200
                 ${location.pathname === link.path
                     ? "bg-white text-primary font-semibold"
                     : "hover:bg-primary-focus"
                   }`}
               >
+                <span>{link.icon}</span>
                 {link.name}
               </Link>
             </li>

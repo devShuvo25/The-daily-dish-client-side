@@ -4,15 +4,20 @@ import userDemoImage from "../../assets/man.png";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { motion, AnimatePresence } from "framer-motion";
 import useAuth from "../../hooks/authentication/useAuth";
+import useAxiosSecure from "../../axios/useAxiosSecure";
 
-const ReviewCard = ({ review }) => {
+const ReviewCard = ({ review ,refetch,isMyReview }) => {
   const { user } = useAuth();
-  const { reviewerImage, reviewerName, reviewerEmail, comment, rating, date } =
+  const {_id, reviewerImage, mealImage, reviewerName, reviewerEmail, comment, rating, date } =
     review || {};
 
   const dropdownRef = useRef(null);
   const containerRef = useRef(null);
   const [open, setOpen] = useState(false);
+  const [openIndex, setOpenIndex] = useState(null);
+  const containerRefs = useRef([]);
+  const {axiosSecure} = useAxiosSecure()
+  
 
   // Toggle dropdown
   const toggleDropdown = () => {
@@ -32,7 +37,20 @@ const ReviewCard = ({ review }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+      const handleDeletReview = async (id) => {
+        if(id){
+            try{
+          const res =  await  axiosSecure.delete(`/reviews/${id}`)
+          console.log(res.data);
+          refetch()
+          setOpenIndex(null)
+            }
+            catch(error){
+                console.log(error);
+            }
+        }
 
+    }
   return (
     <div
       className="w-full bg-white shadow-md rounded-xl p-4 flex gap-4 relative"
@@ -41,7 +59,7 @@ const ReviewCard = ({ review }) => {
       {/* Avatar */}
       <div className="flex-shrink-0">
         <img
-          src={reviewerImage || userDemoImage}
+          src={ isMyReview? mealImage : reviewerImage || userDemoImage}
           alt={reviewerName}
           className="w-12 h-12 rounded-full object-cover"
         />
@@ -51,7 +69,7 @@ const ReviewCard = ({ review }) => {
       <div className="flex-1">
         <div className="flex justify-between items-start">
           <h3 className="font-semibold text-base">{reviewerName}</h3>
-          <span className="text-xs text-gray-500">{date.split("T")[0]}</span>
+          <span className="text-xs text-gray-500">{date?.split("T")[0]}</span>
         </div>
 
         {/* Rating */}
@@ -93,7 +111,7 @@ const ReviewCard = ({ review }) => {
                 className="absolute right-0 top-8 dropdown-content menu bg-base-100 rounded-lg w-40 p-2 shadow-lg border z-50"
               >
                 <li><a>Edit Review</a></li>
-                <li><a className="text-red-500">Delete Review</a></li>
+                <li onClick={() =>handleDeletReview(_id)} ><a className="text-red-500">Delete Review</a></li>
               </motion.ul>
             )}
           </AnimatePresence>
