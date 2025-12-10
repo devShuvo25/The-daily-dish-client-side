@@ -6,12 +6,15 @@ import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/authentication/useAuth";
 import Swal from "sweetalert2";
-const MealsCard = ({ meal = {},isFavourite ,refetch}) => {
-  const {axiosSecure} = useAxiosSecure()
-  const navigate = useNavigate()
+import useRole from "../../hooks/userRole/useRole";
+const MealsCard = ({ meal = {}, isFavourite, refetch , handleDelete }) => {
+  const { axiosSecure } = useAxiosSecure();
+  const navigate = useNavigate();
   // const {} = useQuery()
-  const {user} = useAuth()
-  
+  const { user } = useAuth();
+  const { role } = useRole();
+  console.log(role);
+
   const {
     _id,
     foodName,
@@ -25,48 +28,42 @@ const MealsCard = ({ meal = {},isFavourite ,refetch}) => {
     chefExperience,
   } = meal;
   console.log(isFavourite);
-    
-  const handleRemoveFromFavourites=(_id)=>{
+
+  const handleRemoveFromFavourites = (_id) => {
     Swal.fire({
-  title: "Are you sure?",
-  text: "Do you want to remove this item from your favourites list?",
-  icon: "warning",
-  showCancelButton: true,
-  confirmButtonColor: "#3085d6",
-  cancelButtonColor: "#d33",
-  confirmButtonText: "Yes, delete it!"
-})
-.then(result => {
-  if(result.isConfirmed){
-        axiosSecure.delete(`/favourite-meals?id=${_id}&userEmail=${user?.email}`)
-    .then(res=>{
-        console.log("Deleted Response", res.data)
-        if(res.data.deletedCount){
-           Swal.fire({
-      title: "Deleted!",
-      text: "Your file has been deleted.",
-      icon: "success"
+      title: "Are you sure?",
+      text: "Do you want to remove this item from your favourites list?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosSecure
+          .delete(`/favourite-meals?id=${_id}&userEmail=${user?.email}`)
+          .then((res) => {
+            console.log("Deleted Response", res.data);
+            if (res.data.deletedCount) {
+              Swal.fire({
+                title: "Deleted!",
+                text: "Your file has been deleted.",
+                icon: "success",
+              });
+            }
+            refetch();
+          });
+      }
     });
-        }
-        refetch();
-    })
-  }
-})
-
-}
-
-
-
-
-
+  };
 
   const handleActions = (_id) => {
-    if(!isFavourite){
+    if (!isFavourite) {
       return navigate(`/details/${_id}`);
     }
-    handleRemoveFromFavourites(_id)
-
-  }
+    handleRemoveFromFavourites(_id);
+  };
+  
   return (
     <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
       <div className="relative h-44 bg-gray-100">
@@ -115,24 +112,40 @@ const MealsCard = ({ meal = {},isFavourite ,refetch}) => {
             : ingredients || "Ingredients not listed"}
         </p>
 
-        <div className="flex gap-2">
-          <Link
-          to={`/order/${_id}`}
-            
-            className="btn btn-primary flex-1"
-            aria-label={`Order ${foodName}`}
-          >
-            Order Now
-          </Link>
-          <button 
-            onClick={() =>handleActions(_id)}
-            className="btn btn-ghost"
-            
-           
-          >
-            {isFavourite? "Remove" : "View Details"}
-          </button>
-        </div>
+        {role !== "Chef" ? (
+          <div className="flex gap-2">
+            <Link
+              to={`/order/${_id}`}
+              className="btn btn-primary flex-1"
+              aria-label={`Order ${foodName}`}
+            >
+              Order Now
+            </Link>
+            <button
+              onClick={() => handleActions(_id)}
+              className="btn btn-ghost"
+            >
+              {isFavourite ? "Remove" : "View Details"}
+            </button>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <Link
+              // to={`/order/${_id}`}
+
+              className="btn btn-primary flex-1"
+              aria-label={`Order ${foodName}`}
+            >
+              Update
+            </Link>
+            <button
+              onClick={() =>handleDelete(_id)}
+              className="btn btn-ghost"
+            >
+              Delete
+            </button>
+          </div>
+        )}
       </div>
     </article>
   );

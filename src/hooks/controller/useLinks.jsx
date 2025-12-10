@@ -6,17 +6,9 @@ import { FiTruck } from "react-icons/fi";
 import { AiOutlineLike } from "react-icons/ai";
 
 const useLinks = () => {
-    // const {role} = useRole()
-    const role = "Chef" // Testing
+    const {role} = useRole()
+    // const role = "Chef" // Testing
     let links =[]
-    if(role === "User"){
-          links = [
-            // { name: "My Meals", icon: <MdNoMeals />, path: "/dashboard/my-meals" },
-            { name: "Favourite Meals", icon:<AiOutlineLike />, path: "/dashboard/my-favourites" },
-            { name: "My Reviews", icon:<MdReviews />, path: "/dashboard/my-reviews" },
-            { name: "Manage Orders", icon:<FiTruck />, path: "/dashboard/manage-orders" },
-          ]; 
-    }
     if(role === 'Chef'){
         links = [
             { name: "My Meals", icon: <MdNoMeals />, path: "/dashboard/my-meals" },
@@ -24,12 +16,20 @@ const useLinks = () => {
             { name: "Order Request", icon:<FiTruck />, path: "/dashboard/order-request" },
           ];
     }
-    if(role === 'Admin'){
+    else if(role === 'Admin'){
         links = [
             { name: "Manage User", icon: <MdNoMeals />, path: "/dashboard/my-meals" },
             { name: "Mange request", icon:<AiOutlineLike />, path: "/dashboard/my-favourites" },
             
           ];
+    }
+    else{
+       links = [
+            // { name: "My Meals", icon: <MdNoMeals />, path: "/dashboard/my-meals" },
+            { name: "Favourite Meals", icon:<AiOutlineLike />, path: "/dashboard/my-favourites" },
+            { name: "My Reviews", icon:<MdReviews />, path: "/dashboard/my-reviews" },
+            { name: "Manage Orders", icon:<FiTruck />, path: "/dashboard/manage-orders" },
+          ]; 
     }
     return {links}
 }
