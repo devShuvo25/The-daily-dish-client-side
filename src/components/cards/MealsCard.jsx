@@ -6,14 +6,15 @@ import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/authentication/useAuth";
 import Swal from "sweetalert2";
-import useRole from "../../hooks/userRole/useRole";
-const MealsCard = ({ meal = {}, isFavourite, refetch , handleDelete }) => {
+import useUserData from "../../hooks/userRole/useRole";
+
+const MealsCard = ({ meal = {}, isFavourite, refetch, handleDelete,handleManageUpdate }) => {
   const { axiosSecure } = useAxiosSecure();
   const navigate = useNavigate();
   // const {} = useQuery()
   const { user } = useAuth();
-  const { role } = useRole();
-  console.log(role);
+  const { role ,chefId } = useUserData();
+
 
   const {
     _id,
@@ -28,6 +29,7 @@ const MealsCard = ({ meal = {}, isFavourite, refetch , handleDelete }) => {
     chefExperience,
   } = meal;
   console.log(isFavourite);
+    console.log(role,chefId,meal?.chefId);
 
   const handleRemoveFromFavourites = (_id) => {
     Swal.fire({
@@ -63,7 +65,7 @@ const MealsCard = ({ meal = {}, isFavourite, refetch , handleDelete }) => {
     }
     handleRemoveFromFavourites(_id);
   };
-  
+
   return (
     <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
       <div className="relative h-44 bg-gray-100">
@@ -112,7 +114,7 @@ const MealsCard = ({ meal = {}, isFavourite, refetch , handleDelete }) => {
             : ingredients || "Ingredients not listed"}
         </p>
 
-        {role !== "Chef" ? (
+        {meal.chefId !== chefId ? (
           <div className="flex gap-2">
             <Link
               to={`/order/${_id}`}
@@ -132,16 +134,14 @@ const MealsCard = ({ meal = {}, isFavourite, refetch , handleDelete }) => {
           <div className="flex gap-2">
             <Link
               // to={`/order/${_id}`}
-
+              to={'/dashboard/create-meal'}
+              state={{value:'isUpdate',id: _id}}
               className="btn btn-primary flex-1"
               aria-label={`Order ${foodName}`}
             >
               Update
             </Link>
-            <button
-              onClick={() =>handleDelete(_id)}
-              className="btn btn-ghost"
-            >
+            <button onClick={() => handleDelete(_id)} className="btn btn-ghost">
               Delete
             </button>
           </div>

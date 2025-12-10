@@ -1,16 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from "framer-motion";
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { FaArrowLeft } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import useAxiosSecure from '../axios/useAxiosSecure';
 import useAuth from '../hooks/authentication/useAuth';
 import Swal from 'sweetalert2';
+import useUserData from '../hooks/userRole/useRole';
+import { useQuery } from '@tanstack/react-query';
 
 const AddMeal =  () => {
   const {register,handleSubmit} = useForm()
   const {user} = useAuth()
   const {axiosSecure} = useAxiosSecure()
+  const {chefId,name} = useUserData()
+  const {state} = useLocation()
+  const {value,id} = state || {};
+  const [meal,setMeal] = useState({})
+
+  useEffect( () => {
+    if(value === 'isUpdate' && id){
+      axiosSecure.get(`/meal/${id}`)
+      .then(res => {
+        setMeal(res.data)
+      })
+      }
+  },[axiosSecure,id,value])
+  console.log('This is the current meal:',meal);
   const bdDivisions = [
   "Dhaka",
   "Chattogram",
@@ -90,7 +106,7 @@ const ingredients = ingredientsData.map(item => {
 }).then(result => {
   if(result.isConfirmed){
      try{
-      axiosSecure.post('/meal', mealData)
+      axiosSecure.post('/add-meal', mealData)
       .then(res => {
         if(res.data.insertedId){
            Swal.fire("Added", "", "success");
@@ -99,6 +115,57 @@ const ingredients = ingredientsData.map(item => {
     }
     catch{
       console.log("Something went erong to post meal");
+    }
+  }
+})
+   
+  
+  }
+
+}
+const handleUpdateMeal = async (data) => {
+const ingredientsData = data.ingredients.trim().split(','); // array of strings
+const ingredients = ingredientsData.map(item => {
+  const trimmed = item.trim(); // remove spaces around each ingredient
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+});
+  const photoURL = await handleUploadFoodImage(data)
+  if(data && user) {
+    const mealData = {
+      foodName: data.food_name,
+      foodImage: photoURL,
+      chefName: data.chef_name,
+      chefEmail: user.email,
+      price:data.price,
+      rating:data.rating,
+      ingredients: ingredients,
+      deliveryArea: data.delivary_area,
+      estimatedDeliveryTime:data.delivary_time + 'minutes',
+      chefExperience:data.experience,
+      chefId:data.chef_id,
+      action:'Order Now'
+
+    }
+    console.log(mealData);
+    Swal.fire({
+  title: "Do you want to Update this meal?",
+   html: 'Uploading image and saving data, please wait...',
+  showDenyButton: true,
+  showCancelButton: true,
+  showLoaderOnConfirm:true,
+  confirmButtonText: "Yes ,Update",
+}).then(result => {
+  if(result.isConfirmed){
+     try{
+      axiosSecure.patch(`/update-meal/${id}`, mealData)
+      .then(res => {
+        if(res.data.modifiedCount){
+           Swal.fire("Updated", "", "success");
+        }
+      })
+    }
+    catch{
+      console.log("Something went erong to Update meal");
     }
   }
 })
@@ -120,11 +187,11 @@ const ingredients = ingredientsData.map(item => {
         transition={{ duration: 0.8 }}
         className="max-w-2xl mx-auto text-center mb-12"
       >
-        <h1 className="text-2xl lg:text-5xl font-bold text-habit-primary my-4 lg:my-8">
-          Add a New <span className="color-primary">Meal</span>
+        <h1 className="text-xl text-primary  lg:text-5xl font-bold text-habit-primary my-4 lg:my-8">
+          {value=== 'isUpdate'? 'Update this ' : 'Add a New '}<span className="color-primary">Meal</span>
         </h1>
         <p className="text-habit-text/70 text-lg opacity-70">
-          Provide meal details to create a new menu item.
+          Provide meal details to {value === 'isUpdate'? 'Update this' :'create a new a'} menu item.
         </p>
       </motion.div>
 
@@ -132,7 +199,7 @@ const ingredients = ingredientsData.map(item => {
       
         
       <motion.form
-      onSubmit={handleSubmit(handleCreateMeal)}
+      onSubmit={handleSubmit(value !== 'isUpdate'? handleCreateMeal : handleUpdateMeal)}
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -149,6 +216,7 @@ const ingredients = ingredientsData.map(item => {
               <input
               {...register('food_name',{required:true})}
                 type="text"
+                defaultValue={meal?.foodName}
                 placeholder="Enter Habit title"
                 className="input w-full outline-0"
               />
@@ -177,6 +245,8 @@ const ingredients = ingredientsData.map(item => {
               <input
               {...register('chef_name',{required:true})}
                 type="text"
+                readOnly
+                defaultValue={name}
                 placeholder='Input your name'
                 className="input w-full outline-none"
               />
@@ -189,6 +259,7 @@ const ingredients = ingredientsData.map(item => {
             <div className="relative">
               <input
              {...register('price',{required:true})}
+             defaultValue={meal?.price}
                 type="text"
                 placeholder='Input food price.Ex: 400'
                 className="input w-full outline-none"
@@ -200,15 +271,9 @@ const ingredients = ingredientsData.map(item => {
               Rating
             </label>
             <div className="relative">
-              {/* <input
-              required
-                type="text"
-                name="time"
-                className="input w-full outline-none"
-              /> */}
               <select
               {...register('rating',{required:true})}
-                defaultValue="Select Rating"
+                defaultValue={meal?.rating}
                 className="select outline-none w-full"
               >
                 <option disabled={true}>Select rating</option>
@@ -229,7 +294,7 @@ const ingredients = ingredientsData.map(item => {
               required
               {...register('delivary_time',{required:true})}
                 type="text"
-                
+                defaultValue={meal.delivaryTime}
                 className="input w-full outline-none"
               />
             </div>
@@ -241,6 +306,7 @@ const ingredients = ingredientsData.map(item => {
             <div className="relative">
               <select 
               {...register('delivary_area',{required:true})}
+              defaultValue={meal?.deliveryArea}
               className='select outline-none w-full'>
                <option disabled={true}>Select rating</option>
                 {
@@ -257,8 +323,10 @@ const ingredients = ingredientsData.map(item => {
             </label>
             <div className="relative">
               <input
-              {...register('chef_id',{required:true})}
+              {...register('chef_id',{required:true},)}
                 type="text"
+                readOnly
+                defaultValue={chefId}
                 className="input w-full outline-none"
               />
             </div>
@@ -273,6 +341,7 @@ const ingredients = ingredientsData.map(item => {
               <input
                 type="text"
                 {...register('experience',{required:true})}
+                defaultValue={meal?.chefExperience}
                
                 placeholder="your Experience (if have)"
                 className="input w-full outline-0"
@@ -290,6 +359,7 @@ const ingredients = ingredientsData.map(item => {
             Ingredients 
           </label>
           <textarea
+          defaultValue={meal?.ingredients}
           {...register('ingredients',{required:true})}
             placeholder="Write all ingredients.Ex:Chicken breast,Lettuce,Tomatoes,..."
             className="input w-full h-20 resize-none outline-none focus:outline-0 "
@@ -305,12 +375,19 @@ const ingredients = ingredientsData.map(item => {
           >
            <span><FaArrowLeft /></span> Go back
           </Link>
-          <button
+                {value !== "isUpdate"? 
+                          <button
           type="submit"
            className="btn my-btn"
           >
             Add Meal
-          </button>
+          </button> :
+                    <button
+          type="submit"
+           className="btn my-btn"
+          >
+            Update Now
+          </button>}
         </div>
       </motion.form>
       

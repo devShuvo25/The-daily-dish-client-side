@@ -5,9 +5,11 @@ import useAxiosSecure from '../../axios/useAxiosSecure';
 import Loader from '../Loader/Loader';
 import MealsCard from '../cards/MealsCard';
 import illustrator from '../../assets/undraw_happy-music_na4p.svg'
+import { useLocation } from 'react-router';
 
 const MyMeals = () => {
     const {user} = useAuth()
+    const location = useLocation()
     const {axiosSecure} = useAxiosSecure()
     const {data: meals=[] ,isLoading,refetch} = useQuery({
         queryKey: ['myMeals'],
@@ -42,6 +44,7 @@ const MyMeals = () => {
             }
         }
     }
+
     {isLoading && <Loader/>}
     return (
 
@@ -69,7 +72,8 @@ const MyMeals = () => {
       {/* Meal Cards */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {meals?.map((meal) => (
-          <MealsCard key={meal._id} meal={meal} handleDelete={handleDelete}></MealsCard>
+          <MealsCard key={meal._id} meal={meal}
+           handleDelete={handleDelete}></MealsCard>
         ))}
       </div>
 

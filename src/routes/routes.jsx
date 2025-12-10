@@ -13,6 +13,7 @@ import Error from "../pages/Error";
 import OrderForm from "../pages/OrderForm";
 import MyReviews from "../dashboard/user/MyReviews";
 import AddMeal from "../pages/AddMeal";
+import OrderRequest from "../pages/OrderRequest";
 
 
 export const routes = createBrowserRouter([
@@ -78,6 +79,10 @@ export const routes = createBrowserRouter([
                     {
                         path:'create-meal',
                         Component: AddMeal
+                    },
+                    {
+                        path:'order-request',
+                        Component: OrderRequest
                     }
 
                 ]

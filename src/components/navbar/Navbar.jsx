@@ -6,11 +6,13 @@ import logo from "../../assets/logo.png";
 import { MdNoMeals, MdReviews } from "react-icons/md";
 import { AiOutlineLike } from "react-icons/ai";
 import { FiTruck } from "react-icons/fi";
+import useLinks from "../../hooks/controller/useLinks";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [dashboardOpen, setDashboardOpen] = useState(false);
+  const {links} = useLinks()
 
   const Links = [
     { name: "Home", path: "/" },
@@ -73,6 +75,22 @@ const Navbar = () => {
         <div className="navbar-center hidden lg:flex">
           <ul className="flex  gap-5 items-center px-1">
             {Links.map((link) => (
+              <li key={link.path}>
+                <NavLink
+                  to={link.path}
+                  className={({ isActive }) =>
+                    ` ${
+                      isActive
+                        ? "text-primary font-semibold   mb-2"
+                        : "my-links"
+                    }`
+                  }
+                >
+                  {link.name}
+                </NavLink>
+              </li>
+            ))}
+            {links.map((link) => (
               <li key={link.path}>
                 <NavLink
                   to={link.path}

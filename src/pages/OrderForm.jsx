@@ -18,7 +18,7 @@ const OrderMeal = () => {
   delivaryTime.setDate(today.getDate() + 3);
   const {register,handleSubmit} = useForm()
   const { data: orderedMeal = {} } = useQuery({
-    queryKey: ["meal"],
+    queryKey: ["orderedmeal"],
     queryFn: async () => {
       try {
         const res = await axiosSecure.get(`/meal/${id}`);
@@ -28,14 +28,18 @@ const OrderMeal = () => {
       }
     },
   });
+    const { foodName, chefId, foodImage, price } = orderedMeal || {};
+      const totalPrice = price * quantity + 40;
   // confirm delivary order
   const handleConfirmOrder = (data) => {
     const orderInfo = {
       mealId : id,
       mealName : orderedMeal.foodName,
       mealImage : orderedMeal.foodImage,
+      chefId,
       price : orderedMeal.price,
       quantity,
+      orderTime: new Date(),
       totalPrice : orderedMeal.price * quantity + 40,
       paymentStatus : "pending",
       orderStatus : "pending",
@@ -81,9 +85,9 @@ const OrderMeal = () => {
   }
 }
   console.log(orderedMeal);
-  const { foodName, chefId, foodImage, price } = orderedMeal || {};
-  const totalPrice = price * quantity + 40;
 
+
+  console.log(orderedMeal);
   return (
     <div className="bg-habit-bg min-h-screen text-habit-text px-3 sm:px-4 md:px-6 py-10">
       <title>Order Meal</title>
