@@ -220,48 +220,19 @@ const Navbar = () => {
             transition={{ duration: 0.25 }}
             className="ml-4 mt-2 space-y-2 overflow-hidden"
           >
+            {
+              links.map(link => 
             <li>
               <Link
-                to="/dashboard/my-meals"
-                onClick={() => setDrawerOpen(false)}
-                className="flex items-center gap-2 block px-3 py-2 rounded text-sm hover:bg-primary hover:text-white"
-              >
-                <MdNoMeals />
-                My Meals
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                to="/dashboard/my-favourites"
+                to={link.path}
                 onClick={() => setDrawerOpen(false)}
                 className="flex items-center gap-2 block px-3 py-2 rounded text-sm hover:bg-primary hover:text-white"
               >
                 <AiOutlineLike />
-                Favourite Meals
+                {link.name}
               </Link>
-            </li>
-            <li>
-              <Link
-                to="/dashboard/my-reviews"
-                onClick={() => setDrawerOpen(false)}
-                className="flex items-center gap-2 block px-3 py-2 rounded text-sm hover:bg-primary hover:text-white"
-              >
-                <MdReviews />
-                My Reviews
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                to="/dashboard/manage-orders"
-                onClick={() => setDrawerOpen(false)}
-                className="flex items-center gap-2 block px-3 py-2 rounded text-sm hover:bg-primary hover:text-white"
-              >
-                <FiTruck />
-                Manage Orders
-              </Link>
-            </li>
+            </li>)
+            }
           </motion.ul>
         )}
       </AnimatePresence>

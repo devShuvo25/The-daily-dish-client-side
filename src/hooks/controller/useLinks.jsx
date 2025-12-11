@@ -6,8 +6,8 @@ import { AiOutlineLike } from "react-icons/ai";
 import useUserData from "../userRole/useRole";
 
 const useLinks = () => {
-  // const { role } = useUserData();
-  const role = "Admin" // Testing
+  const { role } = useUserData();
+  // const role = "Admin" // Testing
   let links = [];
   if (role === "Chef") {
     links = [
