@@ -4,7 +4,7 @@ import { PulseLoader } from 'react-spinners';
 const Loader = () => {
     return (
         <div className='flex justify-center items-center h-50'>
-        <PulseLoader color='#FF3938'></PulseLoader>
+        <PulseLoader color='#84C553'></PulseLoader>
         </div>
     );
 };

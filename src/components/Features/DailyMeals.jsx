@@ -36,7 +36,7 @@ const DailyMeals = () => {
             viewport={{ once: true }}
             className="text-center mb-8"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-2">
               <span className="text-primary">Today's</span> Fresh Meals
             </h2>
             <p className="text-neutral">
