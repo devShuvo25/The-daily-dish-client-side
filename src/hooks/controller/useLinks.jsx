@@ -7,7 +7,7 @@ import useUserData from "../userRole/useRole";
 
 const useLinks = () => {
   // const { role } = useUserData();
-  const role = "Admin" // Testing
+  const role = "Chef" // Testing
   let links = [];
   if (role === "Chef") {
     links = [

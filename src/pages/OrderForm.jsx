@@ -7,12 +7,14 @@ import useAxiosSecure from "../axios/useAxiosSecure";
 import useAuth from "../hooks/authentication/useAuth";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
+import useUserData from "../hooks/userRole/useRole";
 
 const OrderMeal = () => {
   const [quantity, setQuantity] = useState(1);
   const { axiosSecure } = useAxiosSecure();
   const { id } = useParams();
   const { user } = useAuth();
+  const {status} = useUserData()
   const today = new Date();
   const delivaryTime = new Date(today);
   delivaryTime.setDate(today.getDate() + 3);
@@ -61,7 +63,7 @@ const OrderMeal = () => {
       confirmButtonText: "Yes,Confirm"
         }) 
         .then(result => {
-          if(result.isConfirmed){
+          if(result.isConfirmed && status !=="Fraud"){
              axiosSecure.post('/orders',orderInfo)
         .then(res=>{
           if(res.data.insertedId){
@@ -71,7 +73,16 @@ const OrderMeal = () => {
       icon: "success"
     });
           }
+
         })
+          }
+          else{
+            Swal.fire({
+  icon: "error",
+  title: "Order Blocked",
+  text: "Your account has been marked as fraud. You cannot place orders at this time.",
+});
+
           }
 
             

@@ -26,49 +26,55 @@ const Profile = () => {
   console.log(userInfo);
 //   be a chef or admin
 const handleRequestForRole = (type) => {
-    const requestData = {
-        user_name: name,
-        user_image: profile_image,
-        user_email : user?.email,
-        request_type: type,
-        request_status: 'Pending',
-        request_time: new Date(),
-    }
-    Swal.fire({
-  title: "Are you sure?",
-  text: "You won't be able to revert this!",
-  icon: "warning",
-  showCancelButton: true,
-  confirmButtonColor: "#3085d6",
-  cancelButtonColor: "#d33",
-  confirmButtonText: "Yes, Sent"
-})
-.then(result => {
-  if(result.isConfirmed){
-        axiosSecure.post('/user-role',requestData)
-     .then(res => {
-      console.log(res.data);
-        if(res.data.insertedId){
-        Swal.fire({
-      title: "Set",
-      text: "Your Request has  been sent",
-      icon: "success"
-    });
-  }
-    if  (res.data.message){
-    Swal.fire({
-      title: "Sorry",
-      text: "Already pending a request",
-      icon: "error"
-    });
-        }
-     })
-  }
-})
+  const requestData = {
+    user_name: name,
+    user_image: profile_image,
+    user_email: user?.email,
+    request_type: type,
+    request_status: "Pending",
+    request_time: new Date(),
+  };
 
-}
+  Swal.fire({
+    title: "Are you sure?",
+    text: `Do you want to request for ${type} role?`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, Send",
+    cancelButtonText: "Cancel",
+  }).then(async (result) => {
+    if (!result.isConfirmed) return;
+
+    try {
+      const res = await axiosSecure.post("/user-role", requestData);
+
+      if (res.data?.result?.insertedId) {
+        Swal.fire({
+          title: "Success",
+          text: "Your request has been sent successfully",
+          icon: "success",
+        });
+      }
+    } catch (error) {
+      if (error.response?.status === 409) {
+        Swal.fire({
+          title: "Sorry",
+          text: "You already have a pending request",
+          icon: "error",
+        });
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: "Something went wrong. Please try again later.",
+          icon: "error",
+        });
+      }
+    }
+  });
+};
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto lg:p-6">
       
       {/* Profile Header */}
       <div className="flex items-center gap-4 bg-white p-4 rounded-lg shadow-md mb-6">
@@ -154,11 +160,11 @@ const handleRequestForRole = (type) => {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-col justify-end md:flex-row gap-4 mt-8">
+      <div className="flex flex-col justify-end md:flex-row gap-8 mt-8">
       {
         role === "User"?
               
-        <div className="flex gap-3">
+        <div className="flex flex-col justify-end md:flex-row gap-4 mt-8">
           <button onClick={() => handleRequestForRole('Chef')} className="btn cursor-pointer w-full md:w-auto bg-secondary text-white py-2 px-5 rounded-lg shadow hover:bg-green-700">
           Be a Chef
         </button>

@@ -1,185 +1,176 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Link, useLocation } from 'react-router';
-import { FaArrowLeft } from 'react-icons/fa';
-import { useForm } from 'react-hook-form';
-import useAxiosSecure from '../axios/useAxiosSecure';
-import useAuth from '../hooks/authentication/useAuth';
-import Swal from 'sweetalert2';
-import useUserData from '../hooks/userRole/useRole';
-import { useQuery } from '@tanstack/react-query';
+import { Link, useLocation } from "react-router";
+import { FaArrowLeft } from "react-icons/fa";
+import { useForm } from "react-hook-form";
+import useAxiosSecure from "../axios/useAxiosSecure";
+import useAuth from "../hooks/authentication/useAuth";
+import Swal from "sweetalert2";
+import useUserData from "../hooks/userRole/useRole";
+import { useQuery } from "@tanstack/react-query";
 
-const AddMeal =  () => {
-  const {register,handleSubmit} = useForm()
-  const {user} = useAuth()
-  const {axiosSecure} = useAxiosSecure()
-  const {chefId,name} = useUserData()
-  const {state} = useLocation()
-  const {value,id} = state || {};
-  const [meal,setMeal] = useState({})
+const AddMeal = () => {
+  const { register, handleSubmit } = useForm();
+  const { user } = useAuth();
+  const { axiosSecure } = useAxiosSecure();
+  const { chefId, name, status } = useUserData();
+  const { state } = useLocation();
+  const { value, id } = state || {};
+  const [meal, setMeal] = useState({});
 
-  useEffect( () => {
-    if(value === 'isUpdate' && id){
-      axiosSecure.get(`/meal/${id}`)
-      .then(res => {
-        setMeal(res.data)
-      })
-      }
-  },[axiosSecure,id,value])
-  console.log('This is the current meal:',meal);
+  useEffect(() => {
+    if (value === "isUpdate" && id) {
+      axiosSecure.get(`/meal/${id}`).then((res) => {
+        setMeal(res.data);
+      });
+    }
+  }, [axiosSecure, id, value]);
+  console.log("This is the current meal:", meal);
   const bdDivisions = [
-  "Dhaka",
-  "Chattogram",
-  "Khulna",
-  "Rajshahi",
-  "Barishal",
-  "Sylhet",
-  "Rangpur",
-  "Mymensingh"
-];
+    "Dhaka",
+    "Chattogram",
+    "Khulna",
+    "Rajshahi",
+    "Barishal",
+    "Sylhet",
+    "Rangpur",
+    "Mymensingh",
+  ];
   // create a new meal
-const handleUploadFoodImage = async (data) => {
-  const file = data.food_image[0];
-  if (!file) return alert("Please select an image");
+  const handleUploadFoodImage = async (data) => {
+    const file = data.food_image[0];
+    if (!file) return alert("Please select an image");
 
-  // Convert to base64
-  const toBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result.split(',')[1]); // remove data:image/...;base64,
-      reader.onerror = (error) => reject(error);
+    // Convert to base64
+    const toBase64 = (file) =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(",")[1]); // remove data:image/...;base64,
+        reader.onerror = (error) => reject(error);
+      });
+
+    const base64Image = await toBase64(file);
+
+    const formData = new FormData();
+    formData.append("image", base64Image); // 🔥 must be 'image'
+
+    const imageAPI = `https://api.imgbb.com/1/upload?key=${
+      import.meta.env.VITE_IMAGE_HOST
+    }`;
+
+    try {
+      const res = await fetch(imageAPI, {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await res.json();
+      // console.log("Uploaded Image:", result.data);
+      return result.data.url; // this is the URL
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const handleCreateMeal = async (data) => {
+    const ingredientsData = data.ingredients.trim().split(","); // array of strings
+    const ingredients = ingredientsData.map((item) => {
+      const trimmed = item.trim(); // remove spaces around each ingredient
+      return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
     });
-
-  const base64Image = await toBase64(file);
-
-  const formData = new FormData();
-  formData.append('image', base64Image); // 🔥 must be 'image'
-
-  const imageAPI = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGE_HOST}`;
-
-  try {
-    const res = await fetch(imageAPI, {
-      method: "POST",
-      body: formData
+    const photoURL = await handleUploadFoodImage(data);
+    if (data && user) {
+      const mealData = {
+        foodName: data.food_name,
+        foodImage: photoURL,
+        chefName: data.chef_name,
+        chefEmail: user.email,
+        price: data.price,
+        rating: data.rating,
+        ingredients: ingredients,
+        deliveryArea: data.delivary_area,
+        estimatedDeliveryTime: data.delivary_time + "minutes",
+        chefExperience: data.experience,
+        chefId: data.chef_id,
+        action: "Order Now",
+      };
+      console.log(mealData);
+      Swal.fire({
+        title: "Do you want to add a new meal?",
+        html: "Uploading image and saving data, please wait...",
+        showDenyButton: true,
+        showCancelButton: true,
+        showLoaderOnConfirm: true,
+        confirmButtonText: "Yes ,Add",
+      }).then((result) => {
+        if (result.isConfirmed && status !== "Fraud") {
+          try {
+            axiosSecure.post("/add-meal", mealData).then((res) => {
+              if (res.data.insertedId) {
+                Swal.fire("Added", "", "success");
+              }
+            });
+          } catch {
+            console.log("Something went erong to post meal");
+          }
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Permission Denied",
+            text: "Your chef account has been marked as fraud. You cannot create meals at this time.",
+          });
+        }
+      });
+    }
+  };
+  const handleUpdateMeal = async (data) => {
+    const ingredientsData = data.ingredients.trim().split(","); // array of strings
+    const ingredients = ingredientsData.map((item) => {
+      const trimmed = item.trim(); // remove spaces around each ingredient
+      return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
     });
-
-    const result = await res.json();
-    // console.log("Uploaded Image:", result.data);
-    return result.data.url; // this is the URL
-  } catch (err) {
-    console.error(err);
-  }
-  
-};
-const handleCreateMeal = async (data) => {
-const ingredientsData = data.ingredients.trim().split(','); // array of strings
-const ingredients = ingredientsData.map(item => {
-  const trimmed = item.trim(); // remove spaces around each ingredient
-  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
-});
-  const photoURL = await handleUploadFoodImage(data)
-  if(data && user) {
-    const mealData = {
-      foodName: data.food_name,
-      foodImage: photoURL,
-      chefName: data.chef_name,
-      chefEmail: user.email,
-      price:data.price,
-      rating:data.rating,
-      ingredients: ingredients,
-      deliveryArea: data.delivary_area,
-      estimatedDeliveryTime:data.delivary_time + 'minutes',
-      chefExperience:data.experience,
-      chefId:data.chef_id,
-      action:'Order Now'
-
-    }
-    console.log(mealData);
-    Swal.fire({
-  title: "Do you want to add a new meal?",
-   html: 'Uploading image and saving data, please wait...',
-  showDenyButton: true,
-  showCancelButton: true,
-  showLoaderOnConfirm:true,
-  confirmButtonText: "Yes ,Add",
-}).then(result => {
-  if(result.isConfirmed){
-     try{
-      axiosSecure.post('/add-meal', mealData)
-      .then(res => {
-        if(res.data.insertedId){
-           Swal.fire("Added", "", "success");
+    const photoURL = await handleUploadFoodImage(data);
+    if (data && user) {
+      const mealData = {
+        foodName: data.food_name,
+        foodImage: photoURL,
+        chefName: data.chef_name,
+        chefEmail: user.email,
+        price: data.price,
+        rating: data.rating,
+        ingredients: ingredients,
+        deliveryArea: data.delivary_area,
+        estimatedDeliveryTime: data.delivary_time + "minutes",
+        chefExperience: data.experience,
+        chefId: data.chef_id,
+        action: "Order Now",
+      };
+      console.log(mealData);
+      Swal.fire({
+        title: "Do you want to Update this meal?",
+        html: "Uploading image and saving data, please wait...",
+        showDenyButton: true,
+        showCancelButton: true,
+        showLoaderOnConfirm: true,
+        confirmButtonText: "Yes ,Update",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            axiosSecure.patch(`/update-meal/${id}`, mealData).then((res) => {
+              if (res.data.modifiedCount) {
+                Swal.fire("Updated", "", "success");
+              }
+            });
+          } catch {
+            console.log("Something went erong to Update meal");
+          }
         }
-      })
+      });
     }
-    catch{
-      console.log("Something went erong to post meal");
-    }
-  }
-})
-   
-  
-  }
+  };
 
-}
-const handleUpdateMeal = async (data) => {
-const ingredientsData = data.ingredients.trim().split(','); // array of strings
-const ingredients = ingredientsData.map(item => {
-  const trimmed = item.trim(); // remove spaces around each ingredient
-  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
-});
-  const photoURL = await handleUploadFoodImage(data)
-  if(data && user) {
-    const mealData = {
-      foodName: data.food_name,
-      foodImage: photoURL,
-      chefName: data.chef_name,
-      chefEmail: user.email,
-      price:data.price,
-      rating:data.rating,
-      ingredients: ingredients,
-      deliveryArea: data.delivary_area,
-      estimatedDeliveryTime:data.delivary_time + 'minutes',
-      chefExperience:data.experience,
-      chefId:data.chef_id,
-      action:'Order Now'
-
-    }
-    console.log(mealData);
-    Swal.fire({
-  title: "Do you want to Update this meal?",
-   html: 'Uploading image and saving data, please wait...',
-  showDenyButton: true,
-  showCancelButton: true,
-  showLoaderOnConfirm:true,
-  confirmButtonText: "Yes ,Update",
-}).then(result => {
-  if(result.isConfirmed){
-     try{
-      axiosSecure.patch(`/update-meal/${id}`, mealData)
-      .then(res => {
-        if(res.data.modifiedCount){
-           Swal.fire("Updated", "", "success");
-        }
-      })
-    }
-    catch{
-      console.log("Something went erong to Update meal");
-    }
-  }
-})
-   
-  
-  }
-
-}
-
-    return (
-        <div className="bg-habit-bg min-h-screen text-habit-text mb-5  px-4">
-
-
-
+  return (
+    <div className="bg-habit-bg min-h-screen text-habit-text mb-5  px-4">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
@@ -188,18 +179,21 @@ const ingredients = ingredientsData.map(item => {
         className="max-w-2xl mx-auto text-center mb-12"
       >
         <h1 className="text-xl text-primary  lg:text-5xl font-bold text-habit-primary my-4 lg:my-8">
-          {value=== 'isUpdate'? 'Update this ' : 'Add a New '}<span className="color-primary">Meal</span>
+          {value === "isUpdate" ? "Update this " : "Add a New "}
+          <span className="color-primary">Meal</span>
         </h1>
         <p className="text-habit-text/70 text-lg opacity-70">
-          Provide meal details to {value === 'isUpdate'? 'Update this' :'create a new a'} menu item.
+          Provide meal details to{" "}
+          {value === "isUpdate" ? "Update this" : "create a new a"} menu item.
         </p>
       </motion.div>
 
       {/* Form Section */}
-      
-        
+
       <motion.form
-      onSubmit={handleSubmit(value !== 'isUpdate'? handleCreateMeal : handleUpdateMeal)}
+        onSubmit={handleSubmit(
+          value !== "isUpdate" ? handleCreateMeal : handleUpdateMeal
+        )}
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -214,7 +208,7 @@ const ingredients = ingredientsData.map(item => {
             </label>
             <div className="relative">
               <input
-              {...register('food_name',{required:true})}
+                {...register("food_name", { required: true })}
                 type="text"
                 defaultValue={meal?.foodName}
                 placeholder="Enter Habit title"
@@ -223,7 +217,6 @@ const ingredients = ingredientsData.map(item => {
             </div>
           </div>
 
-
           {/* Reminder Time */}
           <div>
             <label className="block text-habit-text font-medium mb-1">
@@ -231,7 +224,7 @@ const ingredients = ingredientsData.map(item => {
             </label>
             <div className="relative">
               <input
-                {...register('food_image',{required:true})}
+                {...register("food_image", { required: true })}
                 type="file"
                 className=" file-input w-full outline-none"
               />
@@ -243,11 +236,11 @@ const ingredients = ingredientsData.map(item => {
             </label>
             <div className="relative">
               <input
-              {...register('chef_name',{required:true})}
+                {...register("chef_name", { required: true })}
                 type="text"
                 readOnly
                 defaultValue={name}
-                placeholder='Input your name'
+                placeholder="Input your name"
                 className="input w-full outline-none"
               />
             </div>
@@ -258,10 +251,10 @@ const ingredients = ingredientsData.map(item => {
             </label>
             <div className="relative">
               <input
-             {...register('price',{required:true})}
-             defaultValue={meal?.price}
+                {...register("price", { required: true })}
+                defaultValue={meal?.price}
                 type="text"
-                placeholder='Input food price.Ex: 400'
+                placeholder="Input food price.Ex: 400"
                 className="input w-full outline-none"
               />
             </div>
@@ -272,48 +265,45 @@ const ingredients = ingredientsData.map(item => {
             </label>
             <div className="relative">
               <select
-              {...register('rating',{required:true})}
+                {...register("rating", { required: true })}
                 defaultValue={meal?.rating}
                 className="select outline-none w-full"
               >
                 <option disabled={true}>Select rating</option>
-                {
-                    [1,2,3,4,5].map(rating=> {
-                        return <option >{rating}</option>
-                    })
-                }
+                {[1, 2, 3, 4, 5].map((rating) => {
+                  return <option>{rating}</option>;
+                })}
               </select>
             </div>
           </div>
           <div>
             <label className="block text-habit-text font-medium mb-1">
-             Delivary Time (mins)
+              Delivary Time (mins)
             </label>
             <div className="relative">
               <input
-              required
-              {...register('delivary_time',{required:true})}
+                required
+                {...register("delivary_time", { required: true })}
                 type="text"
                 defaultValue={meal.delivaryTime}
                 className="input w-full outline-none"
               />
             </div>
           </div>
-                    <div>
+          <div>
             <label className="block text-habit-text font-medium mb-1">
               Delivary Area
             </label>
             <div className="relative">
-              <select 
-              {...register('delivary_area',{required:true})}
-              defaultValue={meal?.deliveryArea}
-              className='select outline-none w-full'>
-               <option disabled={true}>Select rating</option>
-                {
-                    bdDivisions.map(area=> {
-                        return <option >{area}</option>
-                    })
-                }
+              <select
+                {...register("delivary_area", { required: true })}
+                defaultValue={meal?.deliveryArea}
+                className="select outline-none w-full"
+              >
+                <option disabled={true}>Select rating</option>
+                {bdDivisions.map((area) => {
+                  return <option>{area}</option>;
+                })}
               </select>
             </div>
           </div>
@@ -323,7 +313,7 @@ const ingredients = ingredientsData.map(item => {
             </label>
             <div className="relative">
               <input
-              {...register('chef_id',{required:true},)}
+                {...register("chef_id", { required: true })}
                 type="text"
                 readOnly
                 defaultValue={chefId}
@@ -340,27 +330,23 @@ const ingredients = ingredientsData.map(item => {
             <div className="relative">
               <input
                 type="text"
-                {...register('experience',{required:true})}
+                {...register("experience", { required: true })}
                 defaultValue={meal?.chefExperience}
-               
                 placeholder="your Experience (if have)"
                 className="input w-full outline-0"
               />
             </div>
           </div>
           {/* Habit Name */}
-
-
-
         </div>
         {/* Short Description */}
         <div>
           <label className="block text-habit-text font-medium mb-1">
-            Ingredients 
+            Ingredients
           </label>
           <textarea
-          defaultValue={meal?.ingredients}
-          {...register('ingredients',{required:true})}
+            defaultValue={meal?.ingredients}
+            {...register("ingredients", { required: true })}
             placeholder="Write all ingredients.Ex:Chicken breast,Lettuce,Tomatoes,..."
             className="input w-full h-20 resize-none outline-none focus:outline-0 "
             rows={3}
@@ -369,30 +355,25 @@ const ingredients = ingredientsData.map(item => {
 
         {/* Submit Button */}
         <div className="flex justify-end items-center gap-8">
-          <Link to={'/'}
-            type="button"
-            className="btn"
-          >
-           <span><FaArrowLeft /></span> Go back
+          <Link to={"/"} type="button" className="btn">
+            <span>
+              <FaArrowLeft />
+            </span>{" "}
+            Go back
           </Link>
-                {value !== "isUpdate"? 
-                          <button
-          type="submit"
-           className="btn my-btn"
-          >
-            Add Meal
-          </button> :
-                    <button
-          type="submit"
-           className="btn my-btn"
-          >
-            Update Now
-          </button>}
+          {value !== "isUpdate" ? (
+            <button type="submit" className="btn my-btn">
+              Add Meal
+            </button>
+          ) : (
+            <button type="submit" className="btn my-btn">
+              Update Now
+            </button>
+          )}
         </div>
       </motion.form>
-      
     </div>
-    );
+  );
 };
 
 export default AddMeal;
