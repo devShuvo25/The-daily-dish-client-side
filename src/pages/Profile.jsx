@@ -4,6 +4,8 @@ import useAuth from "../hooks/authentication/useAuth";
 import useAxiosSecure from "../axios/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import useUserData from "../hooks/userRole/useRole";
+import Swal from "sweetalert2";
+import userImg from '../assets/boy.png'
 
 const Profile = () => {
   const { user } = useAuth();
@@ -32,11 +34,38 @@ const handleRequestForRole = (type) => {
         request_status: 'Pending',
         request_time: new Date(),
     }
-    console.log(requestData);
-     axiosSecure.post('/user-role',requestData)
+    Swal.fire({
+  title: "Are you sure?",
+  text: "You won't be able to revert this!",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "Yes, Sent"
+})
+.then(result => {
+  if(result.isConfirmed){
+        axiosSecure.post('/user-role',requestData)
      .then(res => {
-        console.log(res.data);
+      console.log(res.data);
+        if(res.data.insertedId){
+        Swal.fire({
+      title: "Set",
+      text: "Your Request has  been sent",
+      icon: "success"
+    });
+  }
+    if  (res.data.message){
+    Swal.fire({
+      title: "Sorry",
+      text: "Already pending a request",
+      icon: "error"
+    });
+        }
      })
+  }
+})
+
 }
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -44,7 +73,7 @@ const handleRequestForRole = (type) => {
       {/* Profile Header */}
       <div className="flex items-center gap-4 bg-white p-4 rounded-lg shadow-md mb-6">
         <img
-          src={userInfo?.profile_image || "/default-profile.png"}
+          src={userInfo?.profile_image || userImg}
           alt="Profile"
           className="w-20 h-20 rounded-full object-cover"
         />
@@ -126,14 +155,25 @@ const handleRequestForRole = (type) => {
 
       {/* Action Buttons */}
       <div className="flex flex-col justify-end md:flex-row gap-4 mt-8">
-        <button onClick={() => handleRequestForRole('Chef')} className="btn cursor-pointer w-full md:w-auto bg-secondary text-white py-2 px-5 rounded-lg shadow hover:bg-green-700">
+      {
+        role === "User"?
+              
+        <div className="flex gap-3">
+          <button onClick={() => handleRequestForRole('Chef')} className="btn cursor-pointer w-full md:w-auto bg-secondary text-white py-2 px-5 rounded-lg shadow hover:bg-green-700">
           Be a Chef
         </button>
 
         <button onClick={() => handleRequestForRole('Admin')} className="btn cursor-pointer w-full md:w-auto bg-primary text-white py-2 px-5 rounded-lg shadow hover:bg-blue-700">
           Be an Admin
         </button>
-      </div>
+        </div> :
+      
+      role === 'Chef'?
+       <button onClick={() => handleRequestForRole('Admin')} className="btn cursor-pointer w-full md:w-auto bg-primary text-white py-2 px-5 rounded-lg shadow hover:bg-blue-700">
+          Be an Admin
+        </button> : ''
+      }
+      </div>: 
 
     </div>
   );

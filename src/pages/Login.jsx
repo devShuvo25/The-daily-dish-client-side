@@ -10,29 +10,29 @@ import { useMutation } from "@tanstack/react-query";
 import useAxiosSecure from "../axios/useAxiosSecure";
 
 const Login = () => {
-  const {axiosSecure} = useAxiosSecure()
-   const addUserToDB = useMutation({
-  mutationFn: async (userInfo) => {
-    const res = await axiosSecure.post("/users", userInfo);
-    return res.data;
-  },
-  onSuccess: () => {
-    Swal.fire({
-      title: "Successfully created account",
-      icon: "success",
-      draggable: true,
-    });
-    navigate("/login");
-  },
-  onError: (err) => {
-    console.error(err);
-    Swal.fire({
-      title: "Error",
-      text: err.message,
-      icon: "error",
-    });
-  }
-});
+  const { axiosSecure } = useAxiosSecure();
+  // const addUserToDB = useMutation({
+  //   mutationFn: async (userInfo) => {
+  //     const res = await axiosSecure.post("/users", userInfo);
+  //     console.log(res.data);
+  //     return res.data;
+  //   },
+  //   onSuccess: () => {
+  //     console.log("hello");
+  //     if (location.state) {
+  //       return navigate(location.state);
+  //     }
+  //     navigate("/login");
+  //   },
+  //   onError: (err) => {
+  //     console.error(err);
+  //     Swal.fire({
+  //       title: "Error",
+  //       text: err.message,
+  //       icon: "error",
+  //     });
+  //   },
+  // });
   const {
     register,
     handleSubmit,
@@ -48,22 +48,29 @@ const Login = () => {
   // const location = useLocation();
   const [error, setError] = useState();
   const [isActive, setIsActive] = useState(false);
-  const location = useLocation()
+  const location = useLocation();
   console.log(location.state);
   const handleGoogleSignIn = () => {
     googleSignIn()
-      .then((result) => {
+      .then( (result) => {
         if (result.user) {
-        addUserToDB.mutate(result?.user)
-          Swal.fire({
-            title: "Suucessfully loged in",
-            icon: "success",
-          });
-          if(location.state){
-            
-            return navigate(location.state)
-          }
-          navigate('/')
+          navigate(location.state || '/')
+        const userData = {
+          name: result?.user?.displayName || "Anonymous",
+          profile_image: result?.user?.photoURL || null,
+          email: result?.user?.email,
+          status: "Active",
+          role: "User",
+          created_at: new Date(),
+        };
+        axiosSecure.post('/users',userData)
+          .then(res => {
+            console.log(res.data);
+          })
+          // Swal.fire({
+          //   title: "Suucessfully loged in",
+          //   icon: "success",
+          // });
         }
       })
       .catch((err) => console.log(err.message));
@@ -125,7 +132,7 @@ const Login = () => {
                 <label className="label">Password</label>
                 <div className="relative overflow-visible">
                   <input
-                    type={isActive? 'text' : 'password'}
+                    type={isActive ? "text" : "password"}
                     name="password"
                     className="w-full p-[11px] outline-[1px] focus:outline-primary outline-gray-300 border-1px rounded-full"
                     placeholder="Password"

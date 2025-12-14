@@ -2,35 +2,56 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import useAxiosSecure from "../../axios/useAxiosSecure";
 import useAuth from "../../hooks/authentication/useAuth";
+import Swal from "sweetalert2";
 
 const Manage_Request = () => {
-    const {axiosSecure} = useAxiosSecure()
-    const {user} = useAuth()
+  const { axiosSecure } = useAxiosSecure();
+  const { user } = useAuth();
   // Example request data
-  const {data : requests =[],refetch} = useQuery({
-    queryKey: ['user-role'],
+  const { data: requests = [], refetch } = useQuery({
+    queryKey: ["user-role"],
     queryFn: async () => {
-        const res = axiosSecure.get('/user-request')
-        return (await res).data
-    }
-  })
-//   manage request
-const handleManageRequest = (id,action,type) => {
-    if(id && action) {
-        try{
-            axiosSecure.patch(`/user-request?id=${id}&action=${action}&type=${type}&email=${user?.email}`)
-            .then(res => {
-                if(res.data){
-                    refetch()
+      const res = axiosSecure.get("/user-request");
+      return (await res).data;
+    },
+  });
+  //   manage request
+  const handleManageRequest = (id, action, type) => {
+    if (id && action) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: `Are you sure you want to ${action.slice(0,-2)} this request as a ${type}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: `Yes, ${action.slice(0,-2)}`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            axiosSecure
+              .patch(
+                `/user-request?id=${id}&action=${action}&type=${type}&email=${user?.email}`
+              )
+              .then((res) => {
+                if (res.data) {
+                  refetch();
+                  if (res.data) {
+                    Swal.fire({
+                      title:`${action}`,
+                      text:`Your request has been ${action}`,
+                      icon: "success",
+                    });
+                  }
                 }
-            })
-        }
-        catch{
+              });
+          } catch {
             console.log("Someting went wrong to manage request");
+          }
         }
+      });
     }
-    
-}
+  };
   return (
     <div className="">
       <h2 className="text-xl font-semibold mb-4">Manage User Requests</h2>
@@ -103,19 +124,36 @@ const handleManageRequest = (id,action,type) => {
 
                 {/* Action Buttons */}
                 <td className="space-x-4 flex items-center justify-between">
-                  <button disabled={req.request_status !== 'Pending'}
-                   onClick={() => handleManageRequest(req?._id,'Accepted',req.request_type) } className="btn btn-success btn-xs text-white">
+                  <button
+                    disabled={req.request_status !== "Pending"}
+                    onClick={() =>
+                      handleManageRequest(
+                        req?._id,
+                        "Accepted",
+                        req.request_type
+                      )
+                    }
+                    className="btn btn-success btn-xs text-white"
+                  >
                     Accept
                   </button>
-                  <button disabled={req.request_status !== 'Pending'} 
-                  onClick={() => handleManageRequest(req?._id,'Rejected',req.request_type)} className="btn btn-error btn-xs text-white">
+                  <button
+                    disabled={req.request_status !== "Pending"}
+                    onClick={() =>
+                      handleManageRequest(
+                        req?._id,
+                        "Rejected",
+                        req.request_type
+                      )
+                    }
+                    className="btn btn-error btn-xs text-white"
+                  >
                     Reject
                   </button>
                 </td>
               </tr>
             ))}
           </tbody>
-
         </table>
       </div>
     </div>

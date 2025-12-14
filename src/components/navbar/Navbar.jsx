@@ -23,7 +23,7 @@ const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const handleLogOut = () => {
     logout();
-    navigate("login");
+    navigate("/");
   };
   useEffect(() => {
     const onKey = (e) => {

@@ -22,12 +22,13 @@ const Register = () => {
     return res.data;
   },
   onSuccess: () => {
+    console.log('User got');
     Swal.fire({
       title: "Successfully created account",
       icon: "success",
       draggable: true,
     });
-    navigate("/login");
+    // navigate("/login");
   },
   onError: (err) => {
     console.error(err);
@@ -52,9 +53,8 @@ const Register = () => {
   const handleGoogleSignIn = () => {
     googleSignIn().then((result) => {
       if (result.user) {
-        console.log(user);
        addUserToDB.mutate(user)
-        // navigate("/login");
+        navigate("/");
       }
     });
   };
@@ -63,6 +63,8 @@ const Register = () => {
     if (data.user_password !== data.user_confirm_password) {
       return setError("Password did not matched!");
     }
+    //     addUserToDB.mutate(data)
+    // return
     createUser(data.user_email, data.user_password).then(async(result) => {
       if (result.user) {
         console.log(result.user);
@@ -71,13 +73,22 @@ const Register = () => {
           photoURL: data.user_photoURL || null
         }
        await updateUserProfile(profile)
-        addUserToDB.mutate(user)
+        const userData = {
+          name: result?.user?.displayName || "Anonymous",
+          profile_image: result?.user?.photoURL || null,
+          email:result?.user?.email,
+          // age: result?.user?.age || null,
+          status: "Active",
+          role: "User",
+          created_at: new Date(),
+        };
+        addUserToDB.mutate(userData)
         Swal.fire({
           title: "Successfully created account",
           icon: "success",
           draggable: true,
         });
-        // navigate("/login");
+        navigate("/login");
       }
     });
   };
