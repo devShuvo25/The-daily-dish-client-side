@@ -51,7 +51,7 @@ const Manage_Request = () => {
         }
       });
     }
-  };
+  };console.log(requests)
   return (
     <div className="">
       <h2 className="text-xl font-semibold mb-4">Manage User Requests</h2>

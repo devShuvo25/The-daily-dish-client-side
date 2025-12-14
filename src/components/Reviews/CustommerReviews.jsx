@@ -11,13 +11,14 @@ const CustommerReviews = () => {
     queryKey: ["customer-reviews"],
     queryFn: async () => {
       try {
-        const res = await axiosSecure.get("/reviews?limit=6");
+        const res = await axiosSecure.get("/custommer-reviews");
         return res.data;
       } catch {
         return [];
       }
     },
   });
+  console.log(reviews);
     return (
       <section className="py-16 px-4 ">
         <div className="max-w-7xl mx-auto">

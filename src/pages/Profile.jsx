@@ -6,18 +6,21 @@ import { useQuery } from "@tanstack/react-query";
 import useUserData from "../hooks/userRole/useRole";
 import Swal from "sweetalert2";
 import userImg from '../assets/boy.png'
+import Loader from "../components/Loader/Loader";
 
 const Profile = () => {
   const { user } = useAuth();
   const { axiosSecure } = useAxiosSecure();
   const {role,name,profile_image} = useUserData()
 
-  const { data: userInfo = {} } = useQuery({
+  const { data: userInfo = {},isLoading } = useQuery({
     queryKey: ["userInfo", user?.email],
-    enabled: !!user?.email,
     queryFn: async () => {
-      const res = await axiosSecure.get(`/userinfo/${user?.email}`);
-      return res.data;
+      if(user?.email){
+        const email = user?.email
+        const res = await axiosSecure.get(`/userinfo/${email}`);
+        return res.data;
+      }
     },
   });
 
@@ -72,8 +75,11 @@ const handleRequestForRole = (type) => {
     }
   });
 };
-
+console.log(userInfo);
+  
   return (
+    <>
+    {isLoading? <Loader/> : 
     <div className="max-w-4xl mx-auto lg:p-6">
       
       {/* Profile Header */}
@@ -181,7 +187,8 @@ const handleRequestForRole = (type) => {
       }
       </div>: 
 
-    </div>
+    </div>}
+    </>
   );
 };
 
