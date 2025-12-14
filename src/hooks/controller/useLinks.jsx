@@ -28,7 +28,7 @@ const useLinks = () => {
     links = [
       { name: "My Profile", icon: <MdNoMeals />, path: "/dashboard/my-profile" },
 
-      { name: "Manage User", icon: <MdNoMeals />, path: "/dashboard/my-meals" },
+      { name: "Manage User", icon: <MdNoMeals />, path: "/dashboard/manage-users" },
       {
         name: "Mange request",
         icon: <AiOutlineLike />,
