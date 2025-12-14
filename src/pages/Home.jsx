@@ -11,6 +11,7 @@ import DailyMeals from "../components/Features/DailyMeals";
 import CustommerReviews from "../components/Reviews/CustommerReviews";
 import HIT from "../components/additional/HIT";
 import Action from "../components/additional/Action";
+import Welcome from "../components/additional/Welcome";
 import useUserData from "../hooks/userRole/useRole";
 
 const Home = () => {
@@ -45,6 +46,12 @@ const Home = () => {
       <div className="gsap-section">
         <Banner />
       </div>
+
+      {/* WELCOME / INTRO */}
+      <div className="gsap-section">
+        <Welcome />
+      </div>
+
       {/* DYNAMIC DAILY MEALS */}
       <div className="gsap-section">
         <DailyMeals />

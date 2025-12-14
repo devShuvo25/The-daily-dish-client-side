@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import useAuth from "../../hooks/authentication/useAuth";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/bibimbap.png";
 import { MdNoMeals, MdReviews } from "react-icons/md";
 import { AiOutlineLike } from "react-icons/ai";
 import { FiTruck } from "react-icons/fi";

@@ -56,7 +56,7 @@ const FullWidthSlider = () => {
           <div key={index} className="relative w-full h-full">
         <img
           src={card.image}
-          class="w-full h-full object-cover"
+          className="w-full h-full object-cover"
         />
 
 
