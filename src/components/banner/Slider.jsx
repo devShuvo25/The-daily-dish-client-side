@@ -5,23 +5,23 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 const FullWidthSlider = () => {
-const cards = [
-  {
-  title:'Build Better Habits, One Day at a Time',
-  subtitle:'Track your daily routines, boost productivity, and grow with consistent habits.',
-  image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBQEJwmDDoNI3zSbxnlQ1h_ztLoTw8gU-iow&s"
-  },
-  {
-  title:'Stay Consistent, Stay Ahead',
-  subtitle:'Track your habits, build streaks, and boost your productivity.',
-  image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfS7kbci9AX3pESqNQU6_QBRsxLXbW4ni6MA&s"
-},
-  {
-  title:'Your Journey to Growth Starts Here',
-  subtitle:'Set your goals, track progress, and transform your routine.',
-  image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqmxEBj7frICwcRqgQqvEsleu4nFwKRw7Lqw&s"
-  }
-]
+    const cards = [
+    {
+      title: 'Fresh Home-Cooked Meals',
+      subtitle: 'Experience the authentic taste of homemade dishes prepared with love.',
+      image: "https://images.unsplash.com/photo-1505935428862-770b6f24f629?q=80&w=1920&auto=format&fit=crop"
+    },
+    {
+      title: 'Expert Local Chefs',
+      subtitle: 'Connect with talented local chefs who bring their passion to your table.',
+      image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1920&auto=format&fit=crop"
+    },
+    {
+      title: 'Healthy & Delicious',
+      subtitle: 'Enjoy nutritious meals made from fresh, high-quality ingredients.',
+      image: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?q=80&w=1920&auto=format&fit=crop"
+    }
+  ];
   
   
   const [currentIndex, setCurrentIndex] = useState(0);
