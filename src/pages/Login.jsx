@@ -88,10 +88,6 @@ const Login = () => {
           .then(res => {
             console.log(res.data);
           })
-          // Swal.fire(
-          //   title: "Suucessfully loged in",
-          //   icon: "success",
-          // });
         }
       })
       .catch((err) => console.log(err.message));
