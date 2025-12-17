@@ -53,7 +53,7 @@ const Public_Meals = () => {
       </section>
 
       {/* Controls: Search, Filter, Sort, View */}
-      <section className=" px-4">
+      <section className="px-4">
         <div className="max-w-7xl mx-auto">
           
           <div className="flex flex-col lg:flex-row gap-3 items-center justify-between mb-8">

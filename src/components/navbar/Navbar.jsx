@@ -7,6 +7,8 @@ import { MdNoMeals, MdReviews } from "react-icons/md";
 import { AiOutlineLike } from "react-icons/ai";
 import { FiTruck } from "react-icons/fi";
 import useLinks from "../../hooks/controller/useLinks";
+import { GoSignOut } from "react-icons/go";
+import { PiSignIn } from "react-icons/pi";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -112,7 +114,7 @@ const Navbar = () => {
           {!user ? (
             <div className="flex items-center gap-5 justify-between">
               <Link to={"/login"} className="my-btn">
-                Sign in
+               <PiSignIn /> Sign in
               </Link>
               <Link
                 to={"/register"}
@@ -124,10 +126,10 @@ const Navbar = () => {
           ) : (
             <div className=" cursor-pointer flex items-center gap-3">
               <button onClick={handleLogOut} className="btn btn-primary">
-                Logout
+               <GoSignOut /> Logout
               </button>
               {/* <img src={user?.photoURL || "https://cdn-icons-png.flaticon.com/512/219/219983.png"} alt="" /> */}
-              <div className="m-1 w-10 h-10 rounded-full border-2 justify-center items-center border-primary flex">
+              <div onClick={() => navigate('/dashboard/my-profile')} className="cursor-pointer m-1 w-10 h-10 rounded-full border-2 justify-center items-center border-primary flex">
                 <img
                   className="h-8 w-8 rounded-full"
                   src={

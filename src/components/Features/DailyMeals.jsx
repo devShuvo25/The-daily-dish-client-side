@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from '../../axios/useAxiosSecure';
 import { FaClock, FaMapMarkerAlt, FaStar } from 'react-icons/fa';
 import Loader from '../Loader/Loader';
+import MealsCard from '../cards/MealsCard';
 
 
 const DailyMeals = () => {
@@ -49,7 +50,7 @@ const DailyMeals = () => {
             <Loader/>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {meals?.map((meal, i) => (
+              {meals.slice(0,6)?.map((meal, i) => (
                 <motion.div
                   key={meal._id || i}
                   initial="hidden"
@@ -57,51 +58,11 @@ const DailyMeals = () => {
                   variants={itemVariants}
                   transition={{ delay: i * 0.06 }}
                   viewport={{ once: true }}
+                  onClick={''}
                   className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:scale-105"
                 >
-                  <div className="relative h-48 bg-gray-700">
-                    <img
-                      src={meal.foodImage}
-                      alt={meal.foodName}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-3 right-3 bg-primary text-white px-3 py-1 rounded-full flex items-center gap-1">
-                      <FaStar className="text-accent" />
-                      <span className="font-bold">{meal.rating ?? "-"}</span>
-                    </div>
-                  </div>
-                  <div className="p-4 text-secondary">
-                    <h3 className="text-lg font-bold text-black">
-                      {meal.foodName}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-2">
-                      By <span className="font-semibold">{meal.chefName}</span>
-                    </p>
-                    <p className="text-primary font-bold mb-2">৳{meal.price}</p>
-                    <p className="text-xs text-gray-600 line-clamp-2 mb-3">
-                      {meal.ingredients?.join(", ") ?? "Ingredients not listed"}
-                    </p>
-                    <div className="flex gap-3 text-xs text-gray-700 mb-3">
-                      <div className="flex items-center gap-2">
-                        <FaMapMarkerAlt className="text-primary" />{" "}
-                        {meal.deliveryArea ?? "City"}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <FaClock className="text-primary" />{" "}
-                        {meal.estimatedDeliveryTime ?? "--"} mins
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() =>
-                          navigate(`/order/${meal._id}`, { state: { meal } })
-                        }
-                        className="btn btn-primary w-full"
-                      >
-                        Order Now
-                      </button>
-                    </div>
-                  </div>
+                  <MealsCard meal={meal}/>
+
                 </motion.div>
               ))}
             </div>

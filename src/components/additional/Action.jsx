@@ -16,7 +16,7 @@ const Action = () => {
           </div>
           <div className="flex gap-3">
             <button
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/dashboard/my-profile")}
               className="btn btn-secondary"
             >
               Apply to be a chef

@@ -37,6 +37,7 @@ const Register = () => {
   const [isActive, setIsActive] = useState(false);
   const [isActive_1, setIsActive_1] = useState(false);
   const { axiosSecure } = useAxiosSecure();
+  const [isLoading,setIsLoading] = useState(false)
  const addUserToDB = useMutation({
   mutationFn: async (userInfo) => {
     const res = await axiosSecure.post("/users", userInfo);
@@ -44,12 +45,6 @@ const Register = () => {
   },
   onSuccess: () => {
     console.log('User got');
-    Swal.fire({
-      title: "Successfully created account",
-      icon: "success",
-      draggable: true,
-    });
-    // navigate("/login");
   },
   onError: (err) => {
     console.error(err);
@@ -66,6 +61,7 @@ const Register = () => {
     handleSubmit,
     formState: { errors },
     watch,
+    
   } = useForm({ mode: "onChange" });
   const user_email = watch("user_email");
   const user_password = watch("user_password");
@@ -79,16 +75,15 @@ const Register = () => {
       }
     });
   };
-  const handleLogin = (data) => {
+  const handleRegister = (data) => {
     // const formData = new FormData()
     if (data.user_password !== data.user_confirm_password) {
       return setError("Password did not matched!");
     }
-    //     addUserToDB.mutate(data)
-    // return
-    createUser(data.user_email, data.user_password).then(async(result) => {
+    setIsLoading(true)
+    try{
+      createUser(data.user_email, data.user_password).then(async(result) => {
       if (result.user) {
-        console.log(result.user);
         const profile = {
           displayName: data.user_name,
           photoURL: data.user_photoURL || null
@@ -98,12 +93,12 @@ const Register = () => {
           name: result?.user?.displayName || "Anonymous",
           profile_image: result?.user?.photoURL || null,
           email:result?.user?.email,
-          // age: result?.user?.age || null,
           status: "Active",
           role: "User",
           created_at: new Date(),
         };
         addUserToDB.mutate(userData)
+        setIsLoading(false)
         Swal.fire({
           title: "Successfully created account",
           icon: "success",
@@ -112,6 +107,11 @@ const Register = () => {
         navigate("/login");
       }
     });
+    }
+    catch{
+      setIsLoading(false)
+      console.log('Something went wrong');
+    }
   };
 
   return (
@@ -138,7 +138,7 @@ const Register = () => {
             <div className="text-center">
               <h1 className="text-4xl font-bold text-primary">Register</h1>
             </div>
-            <form onSubmit={handleSubmit(handleLogin)}>
+            <form onSubmit={handleSubmit(handleRegister)}>
               <fieldset className="fieldset w-full ">
                 <label className="label">Name</label>
                 <input
@@ -229,7 +229,7 @@ const Register = () => {
                 )}
                 {error && <p className="text-primary">{error}</p>}
                 <button className="btn btn-primary text-white mt-4 rounded-full w-full">
-                Register Now
+                {isLoading? <span className="loading loading-spinner loading-sm"></span> : 'Register Now'}
                 </button>
                 <button
                   onClick={handleGoogleSignIn}

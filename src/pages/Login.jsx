@@ -14,6 +14,7 @@ import { useGSAP } from "@gsap/react";
 
 const Login = () => {
   const containerRef = useRef();
+  const [isLoading,setIsLoading]= useState(false)
   
   useGSAP(() => {
     const tl = gsap.timeline();
@@ -32,28 +33,7 @@ const Login = () => {
   }, { scope: containerRef });
 
   const { axiosSecure } = useAxiosSecure();
-  // const addUserToDB = useMutation({
-  //   mutationFn: async (userInfo) => {
-  //     const res = await axiosSecure.post("/users", userInfo);
-  //     console.log(res.data);
-  //     return res.data;
-  //   },
-  //   onSuccess: () => {
-  //     console.log("hello");
-  //     if (location.state) {
-  //       return navigate(location.state);
-  //     }
-  //     navigate("/login");
-  //   },
-  //   onError: (err) => {
-  //     console.error(err);
-  //     Swal.fire({
-  //       title: "Error",
-  //       text: err.message,
-  //       icon: "error",
-  //     });
-  //   },
-  // });
+
   const {
     register,
     handleSubmit,
@@ -93,15 +73,17 @@ const Login = () => {
       .catch((err) => console.log(err.message));
   };
   const handleSignInUser = (data) => {
-    console.log(data);
+    // console.log(data);
+    setIsLoading(true)
     logIn(data.user_email, data.user_password)
       .then((result) => {
-        console.log(result);
+        setIsLoading(false)
         if (result.user) {
           navigate("/");
         }
       })
       .catch((err) => {
+        setIsLoading(false)
         err.message = "Invalid email or password";
         setError(err.message);
       });
@@ -183,13 +165,13 @@ const Login = () => {
                   <a className="my-links cursor-pointer">Forgot password?</a>
                 </div>
                 {errors.user_password && (
-                  <p className="text-primary">
+                  <p className="text-red-500">
                     {errors?.user_password.message}
                   </p>
                 )}
-                {error && <p className="text-primary">{error}</p>}
+                {error && <p className="text-red-500">{error}</p>}
                 <button className="btn btn-primary text-white mt-4 rounded-full w-full">
-                  Login
+                  {isLoading? <span className="loading loading-spinner loading-sm"></span> : 'Login'}
                 </button>
 
                 <button
