@@ -1,4 +1,4 @@
-import React, { use } from 'react';
+import React, { use, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { motion } from "framer-motion";
 import { useQuery } from '@tanstack/react-query';
@@ -10,6 +10,7 @@ import Loader from '../Loader/Loader';
 const DailyMeals = () => {
     const navigate = useNavigate();
     const {axiosSecure} = useAxiosSecure();
+ 
       const { data: meals = [], isLoading: mealsLoading } = useQuery({
     queryKey: ["daily-meals"],
     queryFn: async () => {

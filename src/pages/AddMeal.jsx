@@ -136,7 +136,7 @@ const AddMeal = () => {
         foodImage: photoURL,
         chefName: data.chef_name,
         chefEmail: user.email,
-        price: data.price,
+        price: parseInt(data.price),
         rating: data.rating,
         ingredients: ingredients,
         deliveryArea: data.delivary_area,

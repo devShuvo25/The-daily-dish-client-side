@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,18 +12,27 @@ const Public_Meals = () => {
   const navigate = useNavigate();
   const { axiosSecure } = useAxiosSecure();
   const [showFilters, setShowFilters] = useState(false);
-
-  const { data: meals = [], isLoading } = useQuery({
-    queryKey: ["public-meals"],
-    queryFn: async () => {
+     const[searchValue,setSearchValue] = useState('')
+      const[sortValue,setSortvalue] = useState('all')
+      const [filterValue,setFilterValue] = useState('all')
+      const [filterValue2,setFilterValue2] = useState('all')
+      const [filterValue3,setFilterValue3] = useState('all')
+      const [isLoading,setIsLoading] = useState(false)
+      const [meals,setMeals]= useState([])
+      console.log(searchValue,filterValue,filterValue2,filterValue3,sortValue);
+    useEffect( () => {
+      setIsLoading(true)
       try {
-        const res = await axiosSecure.get("/meals");
-        return res.data;
+          axiosSecure.get(`/meals?searchValue=${searchValue}&sortValue=${sortValue}&fv=${filterValue}&fv2=${filterValue2}&fv3=${filterValue3}`)
+          .then(res => {
+            setMeals(res?.data)
+            setIsLoading(false)
+          })
+        
       } catch {
         return [];
       }
-    },
-  });
+    },[searchValue,sortValue,filterValue,filterValue2,filterValue3,axiosSecure])
 
   return (
     <div className=" font-inter">
@@ -51,6 +60,7 @@ const Public_Meals = () => {
              {/* Search Bar - Square/Rounded-lg Style */}
              <div className="relative w-full lg:max-w-2xl shadow-sm">
                <input 
+                onChange={(e) =>setSearchValue((e.target.value).toLocaleLowerCase())}
                  type="text" 
                  placeholder="Search for meals, chefs, or categories..." 
                  className="w-full bg-white text-gray-700 placeholder-gray-400 border border-gray-300 rounded-lg py-3.5 pl-14 pr-6 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-medium h-14"
@@ -79,11 +89,15 @@ const Public_Meals = () => {
                </button>
                
                <div className="relative h-14 min-w-[180px]">
-                  <select className="appearance-none w-full h-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg py-3.5 pl-6 pr-12 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-semibold cursor-pointer transition-all hover:shadow-md">
-                     <option>Recommended</option>
-                     <option>Price: Low to High</option>
-                     <option>Price: High to Low</option>
-                     <option>Newest</option>
+                  <select 
+                onChange={(e) =>setSortvalue((e.target.value).toLocaleLowerCase())}
+                  
+                  className="appearance-none w-full h-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg py-3.5 pl-6 pr-12 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-semibold cursor-pointer transition-all hover:shadow-md">
+                     
+                     <option value={'all'}>Recommended</option>
+                     <option value={'asc'}>Price: Low to High</option>
+                     <option value={'dsc'}>Price: High to Low</option>
+                     <option value={'latest'}>Newest</option>
                   </select>
                   <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
@@ -108,11 +122,14 @@ const Public_Meals = () => {
                    <div className="space-y-2">
                       <label className="text-sm font-bold text-gray-600 ml-4">Category</label>
                       <div className="relative">
-                         <select className="w-full appearance-none bg-gray-50 hover:bg-white text-gray-700 border border-gray-200 rounded-lg py-3 pl-6 pr-10 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer transition-all font-medium h-12">
-                            <option>All Categories</option>
-                            <option>Breakfast</option>
-                            <option>Lunch</option>
-                            <option>Dinner</option>
+                         <select
+                onChange={(e) =>setFilterValue((e.target.value).toLocaleLowerCase())}
+                         
+                         className="w-full appearance-none bg-gray-50 hover:bg-white text-gray-700 border border-gray-200 rounded-lg py-3 pl-6 pr-10 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer transition-all font-medium h-12">
+                            <option value={'all'}>All Categories</option>
+                            <option value={'breakfast'}>Breakfast</option>
+                            <option value={'lunch'}>Lunch</option>
+                            <option value={'dinner'}>Dinner</option>
                          </select>
                          <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
@@ -125,11 +142,14 @@ const Public_Meals = () => {
                    <div className="space-y-2">
                       <label className="text-sm font-bold text-gray-600 ml-4">Price Range</label>
                       <div className="relative">
-                         <select className="w-full appearance-none bg-gray-50 hover:bg-white text-gray-700 border border-gray-200 rounded-lg py-3 pl-6 pr-10 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer transition-all font-medium h-12">
-                            <option>All Prices</option>
-                            <option>Under ৳100</option>
-                            <option>৳100 - ৳300</option>
-                            <option>৳300+</option>
+                         <select
+                onChange={(e) =>setFilterValue2((e.target.value).toLocaleLowerCase())}
+                         
+                         className="w-full appearance-none bg-gray-50 hover:bg-white text-gray-700 border border-gray-200 rounded-lg py-3 pl-6 pr-10 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer transition-all font-medium h-12">
+                            <option value={'all'}>All Prices</option>
+                            <option value={'u-100'}>Under ৳100</option>
+                            <option value={'100-300'}>৳100 - ৳300</option>
+                            <option value={'300+'}>৳300+</option>
                          </select>
                          <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
@@ -142,10 +162,13 @@ const Public_Meals = () => {
                    <div className="space-y-2">
                       <label className="text-sm font-bold text-gray-600 ml-4">Chef</label>
                       <div className="relative">
-                         <select className="w-full appearance-none bg-gray-50 hover:bg-white text-gray-700 border border-gray-200 rounded-lg py-3 pl-6 pr-10 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer transition-all font-medium h-12">
-                            <option>All Chefs</option>
-                            <option>Chef A</option>
-                            <option>Chef B</option>
+                         <select
+                onChange={(e) =>setFilterValue3((e.target.value).toLocaleLowerCase())}
+                         
+                         className="w-full appearance-none bg-gray-50 hover:bg-white text-gray-700 border border-gray-200 rounded-lg py-3 pl-6 pr-10 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer transition-all font-medium h-12">
+                            <option value={'all'}>All Chefs</option>
+                            <option value={'chef-1'}>Chef A</option>
+                            <option value={'chef-2'}>Chef B</option>
                          </select>
                          <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
