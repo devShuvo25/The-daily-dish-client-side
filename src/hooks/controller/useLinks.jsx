@@ -1,15 +1,17 @@
 import React from "react";
-import { 
-  MdReviews, 
-  MdRestaurant, 
-  MdAddCircleOutline, 
-  MdFormatListBulleted, 
-  MdBarChart, 
-  MdFavorite, 
+import {
+  MdReviews,
+  MdRestaurant,
+  MdAddCircleOutline,
+  MdFormatListBulleted,
+  MdBarChart,
+  MdFavorite,
   MdLocalShipping,
   MdAccountCircle,
   MdGroup,
-  MdOutlinePendingActions
+  MdOutlinePendingActions,
+  MdRateReview,
+  MdReceiptLong,
 } from "react-icons/md";
 import { FaUser, FaUsers } from "react-icons/fa";
 import useUserData from "../userRole/useRole";
@@ -20,7 +22,11 @@ const useLinks = () => {
   let links = [];
   if (role === "Chef") {
     links = [
-      { name: "My Profile", icon: <MdAccountCircle />, path: "/dashboard/my-profile" },
+      {
+        name: "My Profile",
+        icon: <MdAccountCircle />,
+        path: "/dashboard/my-profile",
+      },
       { name: "My Meals", icon: <MdRestaurant />, path: "/dashboard/my-meals" },
       {
         name: "Create a Meals",
@@ -35,9 +41,17 @@ const useLinks = () => {
     ];
   } else if (role === "Admin") {
     links = [
-      { name: "My Profile", icon: <MdAccountCircle />, path: "/dashboard/my-profile" },
+      {
+        name: "My Profile",
+        icon: <MdAccountCircle />,
+        path: "/dashboard/my-profile",
+      },
 
-      { name: "Manage User", icon: <MdGroup />, path: "/dashboard/manage-users" },
+      {
+        name: "Manage User",
+        icon: <MdGroup />,
+        path: "/dashboard/manage-users",
+      },
       {
         name: "Mange request",
         icon: <MdOutlinePendingActions />,
@@ -51,9 +65,7 @@ const useLinks = () => {
     ];
   } else {
     links = [
-      // { name: "My Meals", icon: <MdNoMeals />, path: "/dashboard/my-meals" },
-      { name: "My Profile", icon: <MdAccountCircle />, path: "/dashboard/my-profile" },
-
+      { name: "My Profile", icon: <FaUser />, path: "/dashboard/my-profile" },
       {
         name: "Favourite Meals",
         icon: <MdFavorite />,
@@ -61,12 +73,12 @@ const useLinks = () => {
       },
       {
         name: "My Reviews",
-        icon: <MdReviews />,
+        icon: <MdRateReview />,
         path: "/dashboard/my-reviews",
       },
       {
         name: "My Orders",
-        icon: <MdLocalShipping />,
+        icon: <MdReceiptLong />,
         path: "/dashboard/my-orders",
       },
     ];
