@@ -313,7 +313,7 @@ const handlePayment = async (order) => {
                     {
                       order.paymentStatus !== 'Paid'?
                       <button
-                      disabled={order.orderStatus !== "Accepted" && order?.paymentStatus === 'Paid'}
+                      disabled={order.orderStatus !== "Accepted"}
                       onClick={() => handlePayment(order)}
                       className="btn btn-primary btn-xs px-5"
                     >
