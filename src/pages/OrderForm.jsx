@@ -30,7 +30,7 @@ const OrderMeal = () => {
       }
     },
   });
-    const { foodName, chefId= 'CH-112', foodImage, price } = orderedMeal || {};
+    const { foodName, chefId, foodImage, price } = orderedMeal || {};
       const totalPrice = price * quantity + 40;
   // confirm delivary order
   const handleConfirmOrder = (data) => {

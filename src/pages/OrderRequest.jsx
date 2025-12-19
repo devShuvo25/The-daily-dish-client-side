@@ -225,7 +225,7 @@ console.log(orders)
                       {/* Cancel Button */}
                       <button
                       disabled={order.orderStatus !=='Pending'}
-                      onClick={() => handleOrderRequest(order._id, 'Cancel')}
+                      onClick={() => handleOrderRequest(order._id, 'Rejected')}
                         
                         className="flex-1 md:flex-none px-4 py-2 bg-red-500 text-white rounded-lg font-semibold text-sm hover:bg-red-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >
@@ -236,7 +236,7 @@ console.log(orders)
                       <button
                       disabled={order.orderStatus !=='Pending'}
 
-                       onClick={() => handleOrderRequest(order._id, 'Accept')}
+                       onClick={() => handleOrderRequest(order._id, 'Accepted')}
                         
                         className="flex-1 md:flex-none px-4 py-2 bg-blue-500 text-white rounded-lg font-semibold text-sm hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >

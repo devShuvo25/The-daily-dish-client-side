@@ -69,7 +69,7 @@ const DetailsCard = ({ meal = {} }) => {
             <Link to={`/order/${_id}`} className="btn btn-primary">
               Order Now
             </Link>
-          </div>
+        </div>
         </div>
       </div>
     </div>

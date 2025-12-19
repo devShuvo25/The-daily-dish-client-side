@@ -32,7 +32,7 @@ const handlePayment = async (order) => {
     const paymentInfo = {
       amount: order.totalPrice,
       customer_email: order.userEmail,
-      mealId: order.mealId,
+      parcelId: order._id,
       mealName: order.mealName,
       orderId: order._id,
     };
@@ -310,13 +310,19 @@ const handlePayment = async (order) => {
                       </p>
                     </div>
 
-                    <button
-                      disabled={order.orderStatus !== "Accepted"}
+                    {
+                      order.paymentStatus !== 'Paid'?
+                      <button
+                      disabled={order.orderStatus !== "Accepted" && order?.paymentStatus === 'Paid'}
                       onClick={() => handlePayment(order)}
                       className="btn btn-primary btn-xs px-5"
                     >
-                      Pay
-                    </button>
+                    Pay Now
+                    </button>:
+                    <Link to={`/dashboard/payment-success?id=${order?._id}`} className="btn btn-primary btn-xs">
+                      Payment History
+                    </Link>
+                    }
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         order.paymentStatus === "paid"
