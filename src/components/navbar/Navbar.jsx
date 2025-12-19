@@ -3,9 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import useAuth from "../../hooks/authentication/useAuth";
 import logo from "../../assets/bibimbap.png";
-import { MdNoMeals, MdReviews } from "react-icons/md";
 import { AiOutlineLike } from "react-icons/ai";
-import { FiTruck } from "react-icons/fi";
 import useLinks from "../../hooks/controller/useLinks";
 import { GoSignOut } from "react-icons/go";
 import { PiSignIn } from "react-icons/pi";
@@ -14,19 +12,21 @@ const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [dashboardOpen, setDashboardOpen] = useState(false);
-  const {links} = useLinks()
+  const { links } = useLinks();
 
   const Links = [
     { name: "Home", path: "/" },
     { name: "Meals", path: "/meals" },
-    // { name: "Details", path: "/details" },
     user ? { name: "Dashboard", path: "/dashboard" } : '',
-  ];
+  ].filter(Boolean);
+
   const [drawerOpen, setDrawerOpen] = useState(false);
+
   const handleLogOut = () => {
     logout();
     navigate("/");
   };
+
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") setDrawerOpen(false);
@@ -36,85 +36,68 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    // lock scroll when drawer open
-    if (drawerOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    document.body.style.overflow = drawerOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
   }, [drawerOpen]);
+
   return (
     <div>
-      <div className="navbar fixed z-100 bg-white shadow-sm text-secondary px-2 lg:px-8 ">
-        <div className="navbar-start">
-          <div>
-            <button
-              aria-label="Open menu"
-              onClick={() => setDrawerOpen(true)}
-              className="btn btn-primary lg:hidden"
+      <div className="navbar fixed z-50 bg-white shadow-sm text-secondary px-2 sm:px-4 md:px-6 lg:px-8">
+        {/* Navbar Start */}
+        <div className="navbar-start flex items-center gap-2 sm:gap-3">
+          {/* Mobile menu button */}
+          <button
+            aria-label="Open menu"
+            onClick={() => setDrawerOpen(true)}
+            className="btn btn-primary lg:hidden p-2 sm:p-3"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 sm:h-6 w-5 sm:w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h8m-8 6h16"
-                />
-              </svg>
-            </button>
-          </div>
-          <a className="flex justify-center items-center gap-5 text-xl font-bold ">
-            <img className="h-12 ms-3" src={logo} alt="" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h8m-8 6h16"
+              />
+            </svg>
+          </button>
+
+          {/* Logo */}
+          <a className="flex justify-center items-center gap-3 sm:gap-5 text-xl font-bold">
+            <img className="h-10 sm:h-12" src={logo} alt="" />
             <h1 className="hidden lg:block">The Daily <span className="text-primary">Dish</span></h1>
           </a>
         </div>
-        <div className="navbar-center hidden lg:flex">
-          <ul className="flex  gap-5 items-center px-1">
+
+        {/* Navbar Center - Desktop links */}
+        <div className="navbar-center hidden lg:flex flex-1 justify-center">
+          <ul className="flex gap-5 items-center px-1">
             {Links.map((link) => (
               <li key={link.path}>
                 <NavLink
                   to={link.path}
                   className={({ isActive }) =>
-                    ` ${
-                      isActive
-                        ? "text-primary font-semibold   mb-2"
-                        : "my-links"
-                    }`
+                    isActive ? "text-primary font-semibold mb-2" : "my-links"
                   }
                 >
                   {link.name}
                 </NavLink>
               </li>
             ))}
-            {/* {links.map((link) => (
-              <li key={link.path}>
-                <NavLink
-                  to={link.path}
-                  className={({ isActive }) =>
-                    ` ${
-                      isActive
-                        ? "text-primary font-semibold   mb-2"
-                        : "my-links"
-                    }`
-                  }
-                >
-                  {link.name}
-                </NavLink>
-              </li>
-            ))} */}
           </ul>
         </div>
-        <div className="navbar-end gap-5">
+
+        {/* Navbar End - User buttons */}
+        <div className="navbar-end flex items-center gap-3 sm:gap-5">
           {!user ? (
-            <div className="flex items-center gap-5 justify-between">
-              <Link to={"/login"} className="my-btn">
-               <PiSignIn /> Sign in
+            <div className="flex items-center gap-3 sm:gap-5">
+              <Link to={"/login"} className="my-btn flex items-center gap-1 sm:gap-2">
+                Sign in
               </Link>
               <Link
                 to={"/register"}
@@ -124,28 +107,29 @@ const Navbar = () => {
               </Link>
             </div>
           ) : (
-            <div className=" cursor-pointer flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 cursor-pointer">
               <button onClick={handleLogOut} className="btn btn-primary">
-               <GoSignOut /> Logout
+                <GoSignOut /> Logout
               </button>
-              {/* <img src={user?.photoURL || "https://cdn-icons-png.flaticon.com/512/219/219983.png"} alt="" /> */}
-              <div onClick={() => navigate('/dashboard/my-profile')} className="cursor-pointer m-1 w-10 h-10 rounded-full border-2 justify-center items-center border-primary flex">
+              <div
+                onClick={() => navigate('/dashboard/my-profile')}
+                className="cursor-pointer m-1 w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-primary flex items-center justify-center overflow-hidden"
+              >
                 <img
-                  className="h-8 w-8 rounded-full"
-                  src={
-                    user?.photoURL ||
-                    "https://cdn-icons-png.flaticon.com/512/219/219983.png"
-                  }
-                  alt=""
+                  className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover"
+                  src={user?.photoURL || "https://cdn-icons-png.flaticon.com/512/219/219983.png"}
+                  alt="Profile"
                 />
               </div>
             </div>
           )}
         </div>
-        {}
+
+        {/* Drawer / Mobile Menu */}
         <AnimatePresence>
           {drawerOpen && (
             <>
+              {/* Backdrop */}
               <motion.div
                 key="backdrop"
                 initial={{ opacity: 0 }}
@@ -156,13 +140,14 @@ const Navbar = () => {
                 onClick={() => setDrawerOpen(false)}
               />
 
+              {/* Drawer */}
               <motion.aside
                 key="drawer"
                 initial={{ x: "-100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
                 transition={{ type: "spring", stiffness: 260, damping: 30 }}
-                className="fixed left-0 top-0 bottom-0 w-72 bg-white z-50 shadow-xl p-6 overflow-y-auto"
+                className="fixed left-0 top-0 bottom-0 w-72 sm:w-80 bg-white z-50 shadow-xl p-6 overflow-y-auto"
                 role="dialog"
                 aria-modal="true"
               >
@@ -180,69 +165,62 @@ const Navbar = () => {
                 </div>
 
                 <nav>
-  <ul className="flex flex-col gap-3">
+                  <ul className="flex flex-col gap-3">
+                    {/* Home + Meals */}
+                    {Links.filter(l => l.name !== "Dashboard").map((link) => (
+                      <li key={link.path}>
+                        <NavLink
+                          to={link.path}
+                          onClick={() => setDrawerOpen(false)}
+                          className={({ isActive }) =>
+                            `block py-2 px-3 rounded ${isActive ? "bg-primary text-white font-semibold" : "text-secondary"}`
+                          }
+                        >
+                          {link.name}
+                        </NavLink>
+                      </li>
+                    ))}
 
-    {/* Home + Meals */}
-    {Links.filter(l => l.name !== "Dashboard").map((link) => (
-      <li key={link.path}>
-        <NavLink
-          to={link.path}
-          onClick={() => setDrawerOpen(false)}
-          className={({ isActive }) =>
-            `block py-2 px-3 rounded ${
-              isActive
-                ? "bg-primary text-white font-semibold"
-                : "text-secondary"
-            }`
-          }
-        >
-          {link.name}
-        </NavLink>
-      </li>
-    ))}
+                    {/* Dashboard dropdown */}
+                    <li>
+                      <button
+                        onClick={() => setDashboardOpen(!dashboardOpen)}
+                        className="w-full flex justify-between items-center py-2 px-3 font-semibold rounded hover:bg-base-200"
+                      >
+                        Dashboard
+                        <span className="text-xl">
+                          {dashboardOpen ? "−" : "+"}
+                        </span>
+                      </button>
 
-    {/* Dashboard dropdown */}
-    <li>
-      <button
-        onClick={() => setDashboardOpen(!dashboardOpen)}
-        className="w-full flex justify-between items-center py-2 px-3 font-semibold rounded hover:bg-base-200"
-      >
-        Dashboard
-        <span className="text-xl">
-          {dashboardOpen ? "−" : "+"}
-        </span>
-      </button>
+                      <AnimatePresence>
+                        {dashboardOpen && (
+                          <motion.ul
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25 }}
+                            className="ml-4 mt-2 space-y-2 overflow-hidden"
+                          >
+                            {links.map(link => (
+                              <li key={link.path}>
+                                <Link
+                                  to={link.path}
+                                  onClick={() => setDrawerOpen(false)}
+                                  className="flex items-center gap-2 block px-3 py-2 rounded text-sm hover:bg-primary hover:text-white"
+                                >
+                                  <AiOutlineLike />
+                                  {link.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </motion.ul>
+                        )}
+                      </AnimatePresence>
+                    </li>
 
-      <AnimatePresence>
-        {dashboardOpen && (
-          <motion.ul
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="ml-4 mt-2 space-y-2 overflow-hidden"
-          >
-            {
-              links.map(link => 
-            <li>
-              <Link
-                to={link.path}
-                onClick={() => setDrawerOpen(false)}
-                className="flex items-center gap-2 block px-3 py-2 rounded text-sm hover:bg-primary hover:text-white"
-              >
-                <AiOutlineLike />
-                {link.name}
-              </Link>
-            </li>)
-            }
-          </motion.ul>
-        )}
-      </AnimatePresence>
-    </li>
-
-  </ul>
-</nav>
-
+                  </ul>
+                </nav>
               </motion.aside>
             </>
           )}

@@ -90,7 +90,7 @@ const Login = () => {
   };
 
   return (
-    <div ref={containerRef} className="flex flex-col lg:flex-row w-full items-center justify-center  lg:p-10">
+    <div ref={containerRef} className="flex flex-col lg:flex-row w-full items-center justify-center p-5 lg:p-10">
       <title>Log in</title>
 
       {/* Left side */}

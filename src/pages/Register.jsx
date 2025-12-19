@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import useAuth from "../hooks/authentication/useAuth";
 import { HiMiniEyeSlash } from "react-icons/hi2";
 import Swal from "sweetalert2";
-import { useQuery,useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import useAxiosSecure from "../axios/useAxiosSecure";
 import { useRef } from "react";
 import gsap from "gsap";
@@ -14,32 +14,38 @@ import { useGSAP } from "@gsap/react";
 
 const Register = () => {
   const containerRef = useRef();
-  
-  useGSAP(() => {
-    const tl = gsap.timeline();
-    tl.from(".left-section", {
-      x: -50,
-      opacity: 0,
-      duration: 0.8,
-      ease: "power2.out"
-    })
-    .from(".right-section", {
-      x: 50,
-      opacity: 0,
-      duration: 0.8,
-      ease: "power2.out"
-    }, "-=0.6");
-  }, { scope: containerRef });
 
-  const { googleSignIn, createUser, user ,updateUserProfile } = useAuth();
+  useGSAP(
+    () => {
+      const tl = gsap.timeline();
+      tl.from(".left-section", {
+        x: -50,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power2.out",
+      }).from(
+        ".right-section",
+        {
+          x: 50,
+          opacity: 0,
+          duration: 0.8,
+          ease: "power2.out",
+        },
+        "-=0.6"
+      );
+    },
+    { scope: containerRef }
+  );
+
+  const { googleSignIn, createUser, user, updateUserProfile } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState();
   const [isActive, setIsActive] = useState(false);
   const [isActive_1, setIsActive_1] = useState(false);
   const { axiosSecure } = useAxiosSecure();
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
-    const handleUploadProfileImage = async (data) => {
+  const handleUploadProfileImage = async (data) => {
     const file = data.profile_image[0];
     if (!file) return alert("Please select an image");
 
@@ -74,30 +80,29 @@ const Register = () => {
       console.error(err);
     }
   };
- const addUserToDB = useMutation({
-  mutationFn: async (userInfo) => {
-    const res = await axiosSecure.post("/users", userInfo);
-    return res.data;
-  },
-  onSuccess: () => {
-    console.log('User got');
-  },
-  onError: (err) => {
-    console.error(err);
-    Swal.fire({
-      title: "Error",
-      text: err.message,
-      icon: "error",
-    });
-  }
-});
-  
+  const addUserToDB = useMutation({
+    mutationFn: async (userInfo) => {
+      const res = await axiosSecure.post("/users", userInfo);
+      return res.data;
+    },
+    onSuccess: () => {
+      console.log("User got");
+    },
+    onError: (err) => {
+      console.error(err);
+      Swal.fire({
+        title: "Error",
+        text: err.message,
+        icon: "error",
+      });
+    },
+  });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
-    
   } = useForm({ mode: "onChange" });
   const user_email = watch("user_email");
   const user_password = watch("user_password");
@@ -106,56 +111,58 @@ const Register = () => {
   const handleGoogleSignIn = () => {
     googleSignIn().then((result) => {
       if (result.user) {
-       addUserToDB.mutate(user)
+        addUserToDB.mutate(user);
         navigate("/");
       }
     });
   };
-  const handleRegister = async(data) => {
-    console.log(data.profile_image[0])
-    const photoURL = await handleUploadProfileImage(data)
+  const handleRegister = async (data) => {
+    console.log(data.profile_image[0]);
+    const photoURL = await handleUploadProfileImage(data);
     console.log(photoURL);
     // const formData = new FormData()
     if (data.user_password !== data.user_confirm_password) {
       return setError("Password did not matched!");
     }
-    setIsLoading(true)
-    try{
-      createUser(data.user_email, data.user_password).then(async(result) => {
-      if (result.user) {
-        const profile = {
-          displayName: data.user_name,
-          photoURL: photoURL || null
+    setIsLoading(true);
+    try {
+      createUser(data.user_email, data.user_password).then(async (result) => {
+        if (result.user) {
+          const profile = {
+            displayName: data.user_name,
+            photoURL: photoURL || null,
+          };
+          await updateUserProfile(profile);
+          const userData = {
+            name: result?.user?.displayName || "Anonymous",
+            profile_image: result?.user?.photoURL || null,
+            email: result?.user?.email,
+            status: "Active",
+            role: "User",
+            created_at: new Date(),
+          };
+          console.log(userData);
+          addUserToDB.mutate(userData);
+          setIsLoading(false);
+          Swal.fire({
+            title: "Successfully created account",
+            icon: "success",
+            draggable: true,
+          });
+          navigate("/login");
         }
-       await updateUserProfile(profile)
-        const userData = {
-          name: result?.user?.displayName || "Anonymous",
-          profile_image: result?.user?.photoURL || null,
-          email:result?.user?.email,
-          status: "Active",
-          role: "User",
-          created_at: new Date(),
-        };
-        console.log(userData);
-        addUserToDB.mutate(userData)
-        setIsLoading(false)
-        Swal.fire({
-          title: "Successfully created account",
-          icon: "success",
-          draggable: true,
-        });
-        navigate("/login");
-      }
-    });
-    }
-    catch{
-      setIsLoading(false)
-      console.log('Something went wrong');
+      });
+    } catch {
+      setIsLoading(false);
+      console.log("Something went wrong");
     }
   };
 
   return (
-    <div ref={containerRef} className="flex flex-col lg:flex-row w-full items-center justify-center  lg:p-10">
+    <div
+      ref={containerRef}
+      className="flex flex-col lg:flex-row w-full items-center justify-center p-5 lg:p-10"
+    >
       <title>Register</title>
       {/* Left side */}
       <div className="left-section w-full lg:w-[50%] ps-0  flex flex-col lg:flex-row items-start  mb-10 lg:mb-0">
@@ -194,9 +201,9 @@ const Register = () => {
                   })}
                 />
                 <label className="label">Image</label>
-                    <input
-  type="file"
-  className="
+                <input
+                  type="file"
+                  className="
     w-full
     p-[11px]
     outline-[1px]
@@ -213,8 +220,8 @@ const Register = () => {
     file:font-medium
     cursor-pointer
   "
-  {...register("profile_image")}
-/>
+                  {...register("profile_image")}
+                />
 
                 {errors.user_name && (
                   <p className="text-primary">{errors?.user_name.message}</p>
@@ -292,7 +299,11 @@ const Register = () => {
                 )}
                 {error && <p className="text-primary">{error}</p>}
                 <button className="btn btn-primary text-white mt-4 rounded-full w-full">
-                {isLoading? <span className="loading loading-spinner loading-sm"></span> : 'Register Now'}
+                  {isLoading ? (
+                    <span className="loading loading-spinner loading-sm"></span>
+                  ) : (
+                    "Register Now"
+                  )}
                 </button>
                 <button
                   onClick={handleGoogleSignIn}
