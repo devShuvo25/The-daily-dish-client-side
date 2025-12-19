@@ -209,7 +209,7 @@ const Navbar = () => {
                                   onClick={() => setDrawerOpen(false)}
                                   className="flex items-center gap-2 block px-3 py-2 rounded text-sm hover:bg-primary hover:text-white"
                                 >
-                                  <AiOutlineLike />
+                                  {link.icon}
                                   {link.name}
                                 </Link>
                               </li>
