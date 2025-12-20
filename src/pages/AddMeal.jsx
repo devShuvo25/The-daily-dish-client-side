@@ -142,11 +142,12 @@ const AddMeal = () => {
         foodImage: photoURL,
         chefName: data.chef_name,
         chefEmail: user.email,
-        price: parseInt(data.price),
+        price: (data.price),
         rating: data.rating,
         ingredients: ingredients,
         deliveryArea: data.delivary_area,
         estimatedDeliveryTime: data.delivary_time + "minutes",
+        createAt: new Date(),
         chefExperience: data.experience,
         chefId: data.chef_id,
         action: "Order Now",
@@ -252,7 +253,7 @@ const AddMeal = () => {
                 {...register("chef_name", { required: true })}
                 type="text"
                 readOnly
-                defaultValue={name}
+                defaultValue={meal?.chefName}
                 placeholder="Input your name"
                 className="input w-full outline-none"
               />

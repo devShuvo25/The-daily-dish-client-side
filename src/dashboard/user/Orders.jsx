@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,16 +14,37 @@ const Orders = () => {
   const { user } = useAuth();
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const[searchValue,setSearchValue] = useState('')
+  const[sortValue,setSortvalue] = useState('all')
+  const [filterValue,setFilterValue] = useState('all')
+  const [filterValue2,setFilterValue2] = useState('all')
+  const [isLoading,setIsLoading] = useState(false)
+  const [orders,setMeals]= useState([])
 
+useEffect(() => {
+  if (!user?.email) return;
+  
+  // setIsLoading(true);
+  axiosSecure.get(`/orders/${user?.email}?searchValue=${searchValue}&sortValue=${sortValue}&fv=${filterValue}&fv2=${filterValue2}`)
+    .then(res => {
+      setMeals(res?.data);
+      setIsLoading(false);
+    })
+    .catch(error => {
+      console.error("Error fetching orders:", error);
+      setIsLoading(false);
+      setMeals([]); // Reset on error
+    });
+}, [user, searchValue, sortValue, filterValue, filterValue2, axiosSecure]);
 
-  const { data: orders = [], isLoading } = useQuery({
-    queryKey: ["orders", user?.email],
-    queryFn: async () => {
-      const res = await axiosSecure.get(`/orders/${user?.email}`);
-      return res.data;
-    },
-    enabled: !!user?.email,
-  });
+  // const { data: orders = [], isLoading } = useQuery({
+  //   queryKey: ["orders", user?.email],
+  //   queryFn: async () => {
+  //     const res = await axiosSecure.get(`/orders/${user?.email}`);
+  //     return res.data;
+  //   },
+  //   enabled: !!user?.email,
+  // });
 
 const handlePayment = async (order) => {
   try {
@@ -75,6 +96,7 @@ const handlePayment = async (order) => {
              {/* Search Bar - Rounded Full */}
              <div className="relative flex-grow shadow-sm">
                <input 
+                onChange={(e) => setSearchValue(e.target.value.toLocaleLowerCase().trim(' '))}
                  type="text" 
                  placeholder="Search orders..." 
                  className="w-full bg-white text-gray-700 placeholder-gray-400 border border-gray-300 rounded-lg py-3.5 pl-14 pr-6 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-medium h-12"
@@ -103,11 +125,13 @@ const handlePayment = async (order) => {
                </button>
 
                <div className="relative min-w-[200px]">
-                  <select className="appearance-none w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg py-3 pl-6 pr-10 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-semibold cursor-pointer transition-all hover:shadow-md h-12">
-                     <option>Newest First</option>
-                     <option>Oldest First</option>
-                     <option>Price: Low to High</option>
-                     <option>Price: High to Low</option>
+                  <select 
+                  onChange={(e) => setSortvalue(e.target.value)}
+                  className="appearance-none w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg py-3 pl-6 pr-10 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-semibold cursor-pointer transition-all hover:shadow-md h-12">
+                     <option value={'latest'}>Newest First</option>
+                     <option value={'oldest'}>Oldest First</option>
+                     <option value={'asc'}>Price: Low to High</option>
+                     <option value={'dsc'}>Price: High to Low</option>
                   </select>
                   <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
@@ -133,12 +157,14 @@ const handlePayment = async (order) => {
                    <div className="space-y-1.5">
                       <label className="text-xs font-bold text-gray-500 ml-4 uppercase tracking-wider">Order Status</label>
                       <div className="relative">
-                         <select className="w-full appearance-none bg-gray-50 hover:bg-white text-gray-700 border border-gray-200 rounded-lg py-3 pl-6 pr-10 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer transition-all font-medium h-12">
-                            <option>All Status</option>
-                            <option>Pending</option>
-                            <option>Cooking</option>
-                            <option>Delivered</option>
-                            <option>Cancelled</option>
+                         <select
+                         onChange={(e) => setFilterValue(e.target.value)}
+                         className="w-full appearance-none bg-gray-50 hover:bg-white text-gray-700 border border-gray-200 rounded-lg py-3 pl-6 pr-10 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer transition-all font-medium h-12">
+                            <option value={'all'}>All Status</option>
+                            <option value={'pending'}>Pending</option>
+                            <option value={'accepted'}>Accepted</option>
+                            <option value={'delivered'}>Delivered</option>
+                            <option value={'rejected'}>Cancelled</option>
                          </select>
                          <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
@@ -151,11 +177,13 @@ const handlePayment = async (order) => {
                    <div className="space-y-1.5">
                       <label className="text-xs font-bold text-gray-500 ml-4 uppercase tracking-wider">Price Range</label>
                       <div className="relative">
-                         <select className="w-full appearance-none bg-gray-50 hover:bg-white text-gray-700 border border-gray-200 rounded-lg py-3 pl-6 pr-10 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer transition-all font-medium h-12">
-                            <option>All Prices</option>
-                            <option>Under ৳500</option>
-                            <option>৳500 - ৳1000</option>
-                            <option>৳1000+</option>
+                         <select
+                         onChange={(e) => setFilterValue2(e.target.value)}
+                         className="w-full appearance-none bg-gray-50 hover:bg-white text-gray-700 border border-gray-200 rounded-lg py-3 pl-6 pr-10 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer transition-all font-medium h-12">
+                            <option value={'all'}>All Prices</option>
+                            <option value={'u-100'}>Under ৳100</option>
+                            <option value={'100-300'}>৳100 - ৳300</option>
+                            <option value={'300+'}>৳300+</option>
                          </select>
                          <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">

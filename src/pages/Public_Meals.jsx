@@ -12,7 +12,7 @@ const Public_Meals = () => {
   const navigate = useNavigate();
   const { axiosSecure } = useAxiosSecure();
   const [showFilters, setShowFilters] = useState(false);
-     const[searchValue,setSearchValue] = useState('')
+      const[searchValue,setSearchValue] = useState('')
       const[sortValue,setSortvalue] = useState('all')
       const [filterValue,setFilterValue] = useState('all')
       const [filterValue2,setFilterValue2] = useState('all')
