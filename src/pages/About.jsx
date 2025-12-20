@@ -11,8 +11,10 @@ import {
   FaGlobeAmericas,
   FaChartLine,
 } from "react-icons/fa";
+import { useNavigate } from "react-router";
 
 const About = () => {
+    const navigate = useNavigate()
   gsap.registerPlugin(ScrollTrigger);
   const containerRef = useRef();
 
@@ -41,7 +43,7 @@ const About = () => {
       <title>About Us</title>
 
       {/* HERO SECTION */}
-      <div className="gsap-section bg-gradient-to-r from-primary/10 to-orange-100 py-20">
+      <div className="gsap-section bg-primary/10 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
@@ -64,7 +66,7 @@ const About = () => {
       </div>
 
       {/* MISSION & VISION */}
-      <div className="gsap-section py-20 bg-white">
+      <div className="gsap-section py-20 bg-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12">
             {/* Mission */}
@@ -72,7 +74,7 @@ const About = () => {
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="bg-gradient-to-br from-primary/5 to-orange-50 p-8 rounded-2xl border border-primary/10"
+              className="bg-white p-8 rounded-2xl border border-primary/20"
             >
               <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center mb-6">
                 <FaHeart className="text-white text-xl" />
@@ -93,9 +95,9 @@ const About = () => {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="bg-gradient-to-br from-orange-50 to-yellow-50 p-8 rounded-2xl border border-orange-200"
+              className="bg-bg p-8 rounded-2xl border border-primary/20"
             >
-              <div className="w-14 h-14 bg-orange-500 rounded-full flex items-center justify-center mb-6">
+              <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center mb-6">
                 <FaGlobeAmericas className="text-white text-xl" />
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
@@ -113,7 +115,7 @@ const About = () => {
       </div>
 
       {/* WHY CHOOSE US */}
-      <div className="gsap-section py-20 bg-gray-50">
+      <div className="gsap-section py-20 bg-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <motion.h2
@@ -183,7 +185,7 @@ const About = () => {
       </div>
 
       {/* TEAM & STATS */}
-      <div className="gsap-section py-20 bg-white">
+      <div className="gsap-section py-20 bg-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <motion.h2
@@ -207,7 +209,7 @@ const About = () => {
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.1 }}
-                className="text-center p-8 bg-gradient-to-b from-primary/5 to-orange-50 rounded-xl border border-primary/10"
+                className="text-center p-8 bg-bg rounded-xl border border-primary/20"
               >
                 <div className="text-4xl font-bold text-primary mb-2">
                   {stat.number}
@@ -220,7 +222,7 @@ const About = () => {
       </div>
 
       {/* OUR STORY */}
-      <div className="gsap-section py-20 bg-gray-50">
+      <div className="gsap-section py-20 bg-bg">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0 }}
@@ -291,7 +293,7 @@ const About = () => {
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex items-start gap-6 p-6 bg-gradient-to-r from-primary/5 to-transparent rounded-lg border-l-4 border-primary"
+                className="flex items-start gap-6 p-6 bg-white rounded-lg border-l-4 border-primary"
               >
                 <div className="w-2 h-2 bg-primary rounded-full mt-3 flex-shrink-0"></div>
                 <div>
@@ -307,7 +309,7 @@ const About = () => {
       </div>
 
       {/* CTA SECTION */}
-      <div className="gsap-section py-16 bg-gradient-to-r from-primary to-orange-500 text-white text-center">
+      <div className="gsap-section py-16 bg-primary text-white text-center">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -329,6 +331,7 @@ const About = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={navigate('/dashboard/my-profile')}
               className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors"
             >
               Become a Chef
