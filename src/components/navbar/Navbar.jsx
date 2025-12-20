@@ -7,6 +7,7 @@ import { AiOutlineLike } from "react-icons/ai";
 import useLinks from "../../hooks/controller/useLinks";
 import { GoSignOut } from "react-icons/go";
 import { PiSignIn } from "react-icons/pi";
+import { path } from "framer-motion/client";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -18,6 +19,9 @@ const Navbar = () => {
     { name: "Home", path: "/" },
     { name: "Meals", path: "/meals" },
     user ? { name: "Dashboard", path: "/dashboard" } : '',
+    {name:'About Us',path:'/about-us'},
+    {name:'Service',path:'/service'},
+    {name:'Contact',path:'/contact'},
   ].filter(Boolean);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -76,7 +80,7 @@ const Navbar = () => {
 
         {/* Navbar Center - Desktop links */}
         <div className="navbar-center hidden lg:flex flex-1 justify-center">
-          <ul className="flex gap-5 items-center px-1">
+          <ul className="flex gap-8 items-center px-1">
             {Links.map((link) => (
               <li key={link.path}>
                 <NavLink

@@ -20,132 +20,174 @@ import Manage_Users from "../dashboard/admin/Manage_Users";
 import Orders from "../dashboard/user/Orders";
 import PaymentSuccess from "../pages/Paymentsuccess";
 import Statistics from "../dashboard/admin/Statistics";
-
+import About from "../pages/About";
+import Contact from "../pages/Contact";
+import Service from "../pages/Service";
 
 export const routes = createBrowserRouter([
-    {
-        path: '/',
-        Component:Root,
+  {
+    path: "/",
+    Component: Root,
+    children: [
+      {
+        index: true,
+        Component: Home,
+      },
+      {
+        index: "/",
+        Component: Home,
+      },
+      {
+        path: "/meals",
+        Component: Public_Meals,
+      },
+      {
+        path: "/about-us",
+        Component: About,
+      },
+      {
+        path:'/contact',
+        Component:Contact
+      },
+      {
+        path:'/service',
+        Component:Service
+      },
+      {
+        path: "/details/:id",
+        element: (
+          <UserPrivetRoutes>
+            <Details />
+          </UserPrivetRoutes>
+        ),
+      },
+      {
+        path: "/order/:id",
+        element: (
+          <UserPrivetRoutes>
+            <OrderForm />
+          </UserPrivetRoutes>
+        ),
+      },
+      {
+        path: "/*",
+        Component: Error,
+      },
+      {
+        path: "/dashboard",
+        element: (
+          <UserPrivetRoutes>
+            <DashBoard />
+          </UserPrivetRoutes>
+        ),
         children: [
-            {
-                index:true,
-                Component:Home
-            },
-            {
-                index:"/",
-                Component:Home
-            },
-            {
-                path:'/meals',
-                Component:Public_Meals
-            },
-            {
-                path:'/details/:id',
-                element: <UserPrivetRoutes>
-                            <Details/>
-                        </UserPrivetRoutes>
-            },
-            {
-                path:'/order/:id',
-                element: <UserPrivetRoutes>
-                            <OrderForm/>
-                        </UserPrivetRoutes>
-            },
-            {
-                path:'/*',
-                Component:Error
-            },
-            {
-                path:'/dashboard',
-                element: <UserPrivetRoutes>
-                            <DashBoard/>
-                        </UserPrivetRoutes>,
-                children: [
-                    // Dashboard nested routes can be added here
-                    {
-                        index:true,
-                        element:<UserPrivetRoutes>
-                            <Profile/>
-                        </UserPrivetRoutes>
-                    },
-                    {
-                        path:'my-meals',
-                        element: <UserPrivetRoutes>
-                            <MyMeals/>
-                        </UserPrivetRoutes>
-                    },
-                    {
-                        path:'my-favourites',
-                       element: <UserPrivetRoutes>
-                            <FavouriteMeals/>
-                        </UserPrivetRoutes>
-                    },
-                    {
-                        path:'my-reviews',
-                        element:<UserPrivetRoutes>
-                            <MyReviews/>
-                        </UserPrivetRoutes>
-                    },
-                    {
-                        path:'create-meal',
-                        element: <UserPrivetRoutes>
-                            <AddMeal/>
-                        </UserPrivetRoutes>
-                    },
-                    {
-                        path:'order-request',
-                        element: <UserPrivetRoutes>
-                            <OrderRequest/>
-                        </UserPrivetRoutes>
-                    },
-                    {
-                        path:'my-profile',
-                        element: <UserPrivetRoutes>
-                            <Profile/>
-                        </UserPrivetRoutes>
-                    }
-                    ,{
-                        path:'manage-request',
-                        element: <UserPrivetRoutes>
-                            <Manage_Request/>
-                        </UserPrivetRoutes>
-                    },
-                    {
-                        path:'manage-users',
-                        element:<UserPrivetRoutes>
-                            <Manage_Users/>
-                        </UserPrivetRoutes>
-                    },
-                    {
-                        path:'statistics',
-                        element:<UserPrivetRoutes>
-                            <Statistics/>
-                        </UserPrivetRoutes>
-                    }
-                    ,
-                    {
-                        path:'my-orders',
-                        element:<UserPrivetRoutes>
-                            <Orders/>
-                        </UserPrivetRoutes>
-                    },
-                    {
-                        path:'payment-success',
-                        element:<UserPrivetRoutes>
-                            <PaymentSuccess/>
-                        </UserPrivetRoutes>
-                    }
-
-                ]
-            },
-            {
-                path:'/login',
-                Component:Login
-            },
-            {
-                path:'register',
-                Component:Register
-            }
-        ]
-    }
-])
+          // Dashboard nested routes can be added here
+          {
+            index: true,
+            element: (
+              <UserPrivetRoutes>
+                <Profile />
+              </UserPrivetRoutes>
+            ),
+          },
+          {
+            path: "my-meals",
+            element: (
+              <UserPrivetRoutes>
+                <MyMeals />
+              </UserPrivetRoutes>
+            ),
+          },
+          {
+            path: "my-favourites",
+            element: (
+              <UserPrivetRoutes>
+                <FavouriteMeals />
+              </UserPrivetRoutes>
+            ),
+          },
+          {
+            path: "my-reviews",
+            element: (
+              <UserPrivetRoutes>
+                <MyReviews />
+              </UserPrivetRoutes>
+            ),
+          },
+          {
+            path: "create-meal",
+            element: (
+              <UserPrivetRoutes>
+                <AddMeal />
+              </UserPrivetRoutes>
+            ),
+          },
+          {
+            path: "order-request",
+            element: (
+              <UserPrivetRoutes>
+                <OrderRequest />
+              </UserPrivetRoutes>
+            ),
+          },
+          {
+            path: "my-profile",
+            element: (
+              <UserPrivetRoutes>
+                <Profile />
+              </UserPrivetRoutes>
+            ),
+          },
+          {
+            path: "manage-request",
+            element: (
+              <UserPrivetRoutes>
+                <Manage_Request />
+              </UserPrivetRoutes>
+            ),
+          },
+          {
+            path: "manage-users",
+            element: (
+              <UserPrivetRoutes>
+                <Manage_Users />
+              </UserPrivetRoutes>
+            ),
+          },
+          {
+            path: "statistics",
+            element: (
+              <UserPrivetRoutes>
+                <Statistics />
+              </UserPrivetRoutes>
+            ),
+          },
+          {
+            path: "my-orders",
+            element: (
+              <UserPrivetRoutes>
+                <Orders />
+              </UserPrivetRoutes>
+            ),
+          },
+          {
+            path: "payment-success",
+            element: (
+              <UserPrivetRoutes>
+                <PaymentSuccess />
+              </UserPrivetRoutes>
+            ),
+          },
+        ],
+      },
+      {
+        path: "/login",
+        Component: Login,
+      },
+      {
+        path: "register",
+        Component: Register,
+      },
+    ],
+  },
+]);
